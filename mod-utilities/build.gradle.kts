@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+
+    implementation(libs.moshi.kotlin)
 }
 
 // Jitpack
@@ -49,7 +51,6 @@ publishing {
         create<MavenPublication>("release") {
             groupId = "com.christsondev"
             artifactId = "utilities"
-            version = "1.0.0"
 
             afterEvaluate {
                 from(components["release"])
