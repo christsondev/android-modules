@@ -10,7 +10,6 @@ class StorageHelper(
     private val sharedPreferences: SharedPreferences,
     private val moshi: Moshi,
 ) {
-
     // String
     fun save(key: String, value: String) =
         sharedPreferences.edit().putString(key, value).apply()
