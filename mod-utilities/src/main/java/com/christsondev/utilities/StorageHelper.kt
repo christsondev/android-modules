@@ -1,10 +1,15 @@
 package com.christsondev.utilities
 
 import android.content.SharedPreferences
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
+import java.lang.reflect.Type
 
-class StorageHelper(private val sharedPreferences: SharedPreferences) {
+class StorageHelper(
+    private val sharedPreferences: SharedPreferences,
+    private val moshi: Moshi,
+) {
 
     // String
     fun save(key: String, value: String) =
@@ -40,6 +45,16 @@ class StorageHelper(private val sharedPreferences: SharedPreferences) {
 
     fun get(key: String, defaultValue: Float) =
         sharedPreferences.getFloat(key, defaultValue)
+
+    // Object
+    private fun <T> get(key: String, type: Type, defaultValue: T) =
+        runCatching {
+            val jsonString = get(key, "").orEmpty()
+            moshi.adapter<T>(type).fromJson(jsonString) ?: defaultValue
+        }.getOrDefault(defaultValue)
+
+    private fun <T> save(key: String, type: Type, value: T) =
+        save(key, moshi.adapter<T>(type).toJson(value))
 
     fun asFlow(key: String, defaultValue: String) = callbackFlow {
         // Create a listener for preference changes
