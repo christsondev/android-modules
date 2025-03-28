@@ -47,13 +47,13 @@ class StorageHelper(
         sharedPreferences.getFloat(key, defaultValue)
 
     // Object
-    private fun <T> get(key: String, type: Type, defaultValue: T) =
+    fun <T> get(key: String, type: Type, defaultValue: T) =
         runCatching {
             val jsonString = get(key, "").orEmpty()
             moshi.adapter<T>(type).fromJson(jsonString) ?: defaultValue
         }.getOrDefault(defaultValue)
 
-    private fun <T> save(key: String, type: Type, value: T) =
+    fun <T> save(key: String, type: Type, value: T) =
         save(key, moshi.adapter<T>(type).toJson(value))
 
     fun asFlow(key: String, defaultValue: String) = callbackFlow {
