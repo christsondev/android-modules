@@ -38,7 +38,7 @@ fun DateSelector(
     val datePickerState = remember(initialDate) {
         DatePickerState(
             locale = Locale.getDefault(),
-            initialSelectedDateMillis = initialDate.millis,
+            initialSelectedDateMillis = initialDate.timeInMillis,
         )
     }
 
@@ -56,7 +56,7 @@ fun DateSelector(
         colors = buttonColors,
         type = Button.Type.IconWithText(
             icon = IconComposer.Icon(Icons.Rounded.CalendarMonth, tint = iconTint),
-            title = initialDate.toDayMonthYearDash(),
+            title = initialDate.toDayMonthYear("-"),
         )
     ) {
         showDialog = true
