@@ -21,18 +21,18 @@ import com.christsondev.components.button.Button
 import com.christsondev.components.button.ButtonColors
 import com.christsondev.components.theme.AppMultiPreview
 import com.christsondev.components.theme.AppTheme
-import com.christsondev.utilities.Date
+import com.christsondev.utilities.AppDate
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateSelector(
-    initialDate: Date,
+    initialDate: AppDate,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     buttonText: String = "",
     colors: DateSelectorColors = DateSelectorDefaults.colors(),
-    onDateChanged: (Date?) -> Unit,
+    onDateChanged: (AppDate?) -> Unit,
 ) {
     var showDialog by rememberSaveable { mutableStateOf(false) }
     val datePickerState = remember(initialDate) {
@@ -70,7 +70,7 @@ fun DateSelector(
                     type = Button.Type.Text(buttonText),
                     colors = buttonColors,
                 ) {
-                    val newDate = datePickerState.selectedDateMillis?.let { Date(it) }
+                    val newDate = datePickerState.selectedDateMillis?.let { AppDate(it) }
                     onDateChanged.invoke(newDate)
                     showDialog = false
                 }
@@ -90,11 +90,11 @@ private fun Preview() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             DateSelector(
-                initialDate = Date(System.currentTimeMillis()),
+                initialDate = AppDate(System.currentTimeMillis()),
             ) { }
 
             DateSelector(
-                initialDate = Date(System.currentTimeMillis()),
+                initialDate = AppDate(System.currentTimeMillis()),
                 enabled = false,
             ) { }
         }

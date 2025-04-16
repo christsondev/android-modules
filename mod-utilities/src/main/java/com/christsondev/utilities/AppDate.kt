@@ -2,9 +2,10 @@ package com.christsondev.utilities
 
 import android.icu.util.Calendar
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
-class Date(val timeInMillis: Long) {
+class AppDate(val timeInMillis: Long) {
 
     /**
      * @param separator any value e.g: slash `/` or comma `,` or dash `-`
@@ -12,7 +13,8 @@ class Date(val timeInMillis: Long) {
      */
     fun toDayMonthYear(separator: String): String =
         if (timeInMillis > 0) {
-            SimpleDateFormat("dd" + separator + "MM" + separator + "yyyy", Locale.getDefault()).format(Date(timeInMillis))
+            SimpleDateFormat("dd" + separator + "MM" + separator + "yyyy",
+                Locale.getDefault()).format(Date(timeInMillis))
         } else {
             ""
         }
@@ -27,15 +29,15 @@ class Date(val timeInMillis: Long) {
             ""
         }
 
-    fun add(millis: Long) = Date(timeInMillis + millis)
+    fun add(millis: Long) = AppDate(timeInMillis + millis)
 
-    fun minus(millis: Long) = Date(timeInMillis - millis)
+    fun minus(millis: Long) = AppDate(timeInMillis - millis)
 
-    fun isBefore(date: Date) = this.timeInMillis < date.timeInMillis
+    fun isBefore(date: AppDate) = this.timeInMillis < date.timeInMillis
 
-    fun isAfter(date: Date) = this.timeInMillis > date.timeInMillis
+    fun isAfter(date: AppDate) = this.timeInMillis > date.timeInMillis
 
     companion object {
-        fun now() = Date(Calendar.getInstance().timeInMillis)
+        fun now() = AppDate(Calendar.getInstance().timeInMillis)
     }
 }
