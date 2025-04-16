@@ -40,11 +40,12 @@ import com.christsondev.components.theme.AppTheme
 fun CurvedBottomBar(
     items: List<BottomBarItem>,
     modifier: Modifier = Modifier,
+    initialValue: Int = 0,
     colors: BottomBarColors = BottomBarDefaults.colors(),
     containerColor: Color = AppTheme.color.surfaceContainer,
     onSelectedIndex: (Int) -> Unit,
 ) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by remember { mutableIntStateOf(initialValue) }
     val animationValue = remember { Animatable(0f) }
 
     val screenWidth = ScreenWidth().dp
@@ -157,6 +158,7 @@ private fun Preview() {
                     label = "Settings",
                 )
             ),
+            initialValue = 1,
             onSelectedIndex = { },
         )
     }

@@ -8,6 +8,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 
 composeCompiler = "1.5.14"
+composeNavigation = "2.8.9"
 
 constraintLayout = "1.1.1"
 
@@ -26,6 +27,7 @@ compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-constraintLayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintLayout" }
 
@@ -39,6 +41,6 @@ maven-publish = { id = "maven-publish" }
 android-library = { id = "com.android.library", version.ref = "agp" }  # Jitpack
 
 [bundles]
-compose = ["compose-material3", "compose-ui", "compose-ui-tooling-preview", "androidx-activity-compose", "androidx-constraintLayout"]
+compose = ["compose-material3", "compose-ui", "compose-ui-tooling-preview", "compose-navigation", "androidx-activity-compose", "androidx-constraintLayout"]
 composeIcons = ["compose-material-icons-core","compose-material-icons-extended"]
 
