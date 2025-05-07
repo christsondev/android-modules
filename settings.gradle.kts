@@ -26,3 +26,4 @@ dependencyResolutionManagement {
 rootProject.name = "ChristsonDevTools"
 include(":mod-components")
 include(":mod-utilities")
+include(":mod-printer")
