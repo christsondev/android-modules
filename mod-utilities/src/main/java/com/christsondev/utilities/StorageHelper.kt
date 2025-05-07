@@ -1,6 +1,7 @@
 package com.christsondev.utilities
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -12,35 +13,35 @@ class StorageHelper(
 ) {
     // String
     fun save(key: String, value: String) =
-        sharedPreferences.edit().putString(key, value).apply()
+        sharedPreferences.edit { putString(key, value) }
 
     fun get(key: String, defaultValue: String) =
         sharedPreferences.getString(key, defaultValue)
 
     // Boolean
     fun save(key: String, value: Boolean) =
-        sharedPreferences.edit().putBoolean(key, value).apply()
+        sharedPreferences.edit { putBoolean(key, value) }
 
     fun get(key: String, defaultValue: Boolean) =
         sharedPreferences.getBoolean(key, defaultValue)
 
     // Int
     fun save(key: String, value: Int) =
-        sharedPreferences.edit().putInt(key, value).apply()
+        sharedPreferences.edit { putInt(key, value) }
 
     fun get(key: String, defaultValue: Int) =
         sharedPreferences.getInt(key, defaultValue)
 
     // Long
     fun save(key: String, value: Long) =
-        sharedPreferences.edit().putLong(key, value).apply()
+        sharedPreferences.edit { putLong(key, value) }
 
     fun get(key: String, defaultValue: Long) =
         sharedPreferences.getLong(key, defaultValue)
 
     // Float
     fun save(key: String, value: Float) =
-        sharedPreferences.edit().putFloat(key, value).apply()
+        sharedPreferences.edit { putFloat(key, value) }
 
     fun get(key: String, defaultValue: Float) =
         sharedPreferences.getFloat(key, defaultValue)

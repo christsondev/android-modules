@@ -17,21 +17,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.christsondev.components.compose.clickableRipple
 import com.christsondev.components.theme.AppMultiPreview
 import com.christsondev.components.theme.AppTheme
 
 data object Tile {
     sealed interface Type {
-        data object Box: Type
+        data class Box(
+            val content: @Composable BoxScope.() -> Unit,
+        ): Type
 
         data class Column(
             val arrangement: Arrangement.Vertical,
             val alignment: Alignment.Horizontal,
+            val content: @Composable ColumnScope.() -> Unit,
         ): Type
 
         data class Row(
             val arrangement: Arrangement.Horizontal,
             val alignment: Alignment.Vertical,
+            val content: @Composable RowScope.() -> Unit,
         ): Type
     }
 }
@@ -42,18 +47,22 @@ fun Tile(
     modifier: Modifier = Modifier,
     backgroundColor: Color = AppTheme.color.background,
     contentPadding: PaddingValues = PaddingValues(),
-    content: @Composable () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
     val tileModifier = modifier
         .shadow(elevation = 3.dp, shape = AppTheme.shape.medium)
         .background(color = backgroundColor)
-        .padding(contentPadding)
+
+    onClick?.let { tileModifier.clickableRipple(onClick = onClick) }
+
+    tileModifier.padding(contentPadding)
 
     when (type) {
-        Tile.Type.Box -> {
-            Box(modifier = tileModifier) {
-                content.invoke()
-            }
+        is Tile.Type.Box -> {
+            Box(
+                modifier = tileModifier,
+                content = type.content,
+            )
         }
 
         is Tile.Type.Column -> {
@@ -61,9 +70,8 @@ fun Tile(
                 modifier = tileModifier,
                 verticalArrangement = type.arrangement,
                 horizontalAlignment = type.alignment,
-            ) {
-                content.invoke()
-            }
+                content = type.content,
+            )
         }
 
         is Tile.Type.Row -> {
@@ -71,9 +79,8 @@ fun Tile(
                 modifier = tileModifier,
                 horizontalArrangement = type.arrangement,
                 verticalAlignment = type.alignment,
-            ) {
-                content.invoke()
-            }
+                content = type.content,
+            )
         }
     }
 }
@@ -83,9 +90,11 @@ fun Tile(
 private fun Preview() {
     AppTheme {
         Tile(
-            type = Tile.Type.Box,
-        ) {
-            Text("Testing")
-        }
+            type = Tile.Type.Box(
+                content = {
+                    Text("Testing")
+                }
+            ),
+        )
     }
 }

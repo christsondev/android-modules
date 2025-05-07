@@ -1,5 +1,6 @@
 [versions]
 agp = "8.8.2"
+ksp = "2.0.21-1.0.27"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 activityCompose = "1.10.1"
@@ -11,6 +12,9 @@ composeCompiler = "1.5.14"
 composeNavigation = "2.8.9"
 
 constraintLayout = "1.1.1"
+
+hilt = "2.51.1"
+hiltNavigationCompose = "1.2.0"
 
 moshi = "1.15.0"
 
@@ -33,14 +37,21 @@ androidx-constraintLayout = { group = "androidx.constraintlayout", name = "const
 
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshi" }
 
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }  # Jitpack
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 maven-publish = { id = "maven-publish" }
-android-library = { id = "com.android.library", version.ref = "agp" }  # Jitpack
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [bundles]
 compose = ["compose-material3", "compose-ui", "compose-ui-tooling-preview", "compose-navigation", "androidx-activity-compose", "androidx-constraintLayout"]
 composeIcons = ["compose-material-icons-core","compose-material-icons-extended"]
+hilt = ["hilt-android", "hilt-navigation-compose"]
 
