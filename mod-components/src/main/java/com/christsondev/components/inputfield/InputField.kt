@@ -25,7 +25,6 @@ object InputField {
         data class Text(
             val value: String = "",
             val hint: String = "",
-            val enabled: Boolean = true,
             val keyboardType: KeyboardType = KeyboardType.Text,
             val onTextChanged: (String) -> Unit = {},
             val onDone: (String) -> Unit = {},
@@ -35,7 +34,6 @@ object InputField {
             val label: String,
             val value: String = "",
             val hint: String = "",
-            val enabled: Boolean = true,
             val labelWeight: Float = 0.3f,
             val keyboardType: KeyboardType = KeyboardType.Text,
             val onTextChanged: (String) -> Unit = {},
@@ -46,7 +44,6 @@ object InputField {
             val icon: IconComposer,
             val value: String = "",
             val hint: String = "",
-            val enabled: Boolean = true,
             val keyboardType: KeyboardType = KeyboardType.Text,
             val onTextChanged: (String) -> Unit = {},
             val onDone: (String) -> Unit = {},
@@ -59,6 +56,7 @@ fun InputField(
     type: InputField.Type,
     modifier: Modifier = Modifier,
     colors: InputColors = InputDefaults.colors(),
+    enabled: Boolean = true,
 ) {
     when (type) {
         is InputField.Type.Text -> {
@@ -66,6 +64,7 @@ fun InputField(
                 modifier = modifier,
                 type = type,
                 colors = colors,
+                enabled = enabled,
             )
         }
 
@@ -74,6 +73,7 @@ fun InputField(
                 modifier = modifier,
                 type = type,
                 colors = colors,
+                enabled = enabled,
             )
         }
 
@@ -82,6 +82,7 @@ fun InputField(
                 modifier = modifier,
                 type = type,
                 colors = colors,
+                enabled = enabled,
             )
         }
     }
@@ -92,14 +93,15 @@ private fun InputFieldText(
     type: InputField.Type.Text,
     modifier: Modifier = Modifier,
     colors: InputColors,
+    enabled: Boolean,
 ) {
-    val backgroundColor = if (type.enabled) colors.container else colors.disabledContainer
+    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
 
     InputText(
         modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
         value = type.value,
         hint = type.hint,
-        enabled = type.enabled,
+        enabled = enabled,
         colors = colors,
         keyboardType = type.keyboardType,
         onTextChanged = type.onTextChanged,
@@ -112,8 +114,9 @@ private fun InputFieldWithLabel(
     type: InputField.Type.WithLabel,
     modifier: Modifier = Modifier,
     colors: InputColors,
+    enabled: Boolean,
 ) {
-    val backgroundColor = if (type.enabled) colors.container else colors.disabledContainer
+    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
 
     Row(
         modifier = Modifier.then(modifier),
@@ -131,7 +134,7 @@ private fun InputFieldWithLabel(
             modifier = containerModifier(backgroundColor = backgroundColor).weight(1f - type.labelWeight),
             value = type.value,
             hint = type.hint,
-            enabled = type.enabled,
+            enabled = enabled,
             colors = colors,
             keyboardType = type.keyboardType,
             onTextChanged = type.onTextChanged,
@@ -145,8 +148,9 @@ private fun InputFieldWithIcon(
     type: InputField.Type.WithIcon,
     modifier: Modifier = Modifier,
     colors: InputColors,
+    enabled: Boolean,
 ) {
-    val backgroundColor = if (type.enabled) colors.container else colors.disabledContainer
+    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
 
     Row(
         modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
@@ -157,7 +161,7 @@ private fun InputFieldWithIcon(
         InputText(
             value = type.value,
             hint = type.hint,
-            enabled = type.enabled,
+            enabled = enabled,
             colors = colors,
             keyboardType = type.keyboardType,
             onTextChanged = type.onTextChanged,

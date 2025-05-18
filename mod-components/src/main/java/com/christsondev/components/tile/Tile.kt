@@ -18,12 +18,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutScope
+import com.christsondev.components.compose.clickableRipple
 import com.christsondev.components.theme.AppMultiPreview
 import com.christsondev.components.theme.AppTheme
+import com.christsondev.utilities.orElse
 
 data object Tile {
     sealed interface Type {
         data object Box: Type
+
+        data object ConstraintLayout: Type
 
         data class Column(
             val arrangement: Arrangement.Vertical,
@@ -99,17 +105,40 @@ fun Tile(
 }
 
 @Composable
+fun Tile(
+    type: Tile.Type.ConstraintLayout,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = AppTheme.color.background,
+    contentPadding: PaddingValues = PaddingValues(),
+    onClick: (() -> Unit)? = null,
+    content: @Composable ConstraintLayoutScope.() -> Unit,
+) {
+    ConstraintLayout(
+        modifier = modifier.appendModifier(
+            backgroundColor = backgroundColor,
+            contentPadding = contentPadding,
+            onClick = onClick,
+        ),
+        content = content,
+    )
+}
+
+@Composable
 private fun Modifier.appendModifier(
     backgroundColor: Color,
     contentPadding: PaddingValues,
     onClick: (() -> Unit)?,
-) = this
-    .shadow(elevation = 3.dp, shape = AppTheme.shape.medium)
-    .background(color = backgroundColor)
-    .apply {
-        onClick?.let { clickable(onClick = onClick) }
-    }
-    .padding(contentPadding)
+) =
+    this.shadow(elevation = 3.dp, shape = AppTheme.shape.medium)
+        .background(color = backgroundColor)
+        .then(
+            onClick?.let {
+                Modifier.clickableRipple(onClick = it)
+            }.orElse {
+                Modifier
+            }
+        )
+        .padding(contentPadding)
 
 @AppMultiPreview
 @Composable
