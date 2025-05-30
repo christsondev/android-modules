@@ -26,6 +26,7 @@ internal fun InputText(
     hint: String = "",
     enabled: Boolean = true,
     colors: InputColors = InputDefaults.colors(),
+    configs: InputConfigs = InputDefaults.configs(),
     keyboardType: KeyboardType = KeyboardType.Text,
     onTextChanged: (String) -> Unit = {},
     onDone: (String) -> Unit = {},
@@ -88,7 +89,9 @@ internal fun InputText(
 //                }
 //            }
 //        },
-        singleLine = true,
+        singleLine = configs.singleLine,
+        minLines = configs.minLines,
+        maxLines = configs.maxLines,
         enabled = enabled,
         textStyle = AppTheme.typography.body.copy(color = textColor),
         decorationBox = { innerTextField ->

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -56,6 +57,7 @@ fun InputField(
     type: InputField.Type,
     modifier: Modifier = Modifier,
     colors: InputColors = InputDefaults.colors(),
+    configs: InputConfigs = InputDefaults.configs(),
     enabled: Boolean = true,
 ) {
     when (type) {
@@ -64,6 +66,7 @@ fun InputField(
                 modifier = modifier,
                 type = type,
                 colors = colors,
+                configs = configs,
                 enabled = enabled,
             )
         }
@@ -73,6 +76,7 @@ fun InputField(
                 modifier = modifier,
                 type = type,
                 colors = colors,
+                configs = configs,
                 enabled = enabled,
             )
         }
@@ -82,6 +86,7 @@ fun InputField(
                 modifier = modifier,
                 type = type,
                 colors = colors,
+                configs = configs,
                 enabled = enabled,
             )
         }
@@ -93,6 +98,7 @@ private fun InputFieldText(
     type: InputField.Type.Text,
     modifier: Modifier = Modifier,
     colors: InputColors,
+    configs: InputConfigs,
     enabled: Boolean,
 ) {
     val backgroundColor = if (enabled) colors.container else colors.disabledContainer
@@ -103,6 +109,7 @@ private fun InputFieldText(
         hint = type.hint,
         enabled = enabled,
         colors = colors,
+        configs = configs,
         keyboardType = type.keyboardType,
         onTextChanged = type.onTextChanged,
         onDone = type.onDone,
@@ -114,6 +121,7 @@ private fun InputFieldWithLabel(
     type: InputField.Type.WithLabel,
     modifier: Modifier = Modifier,
     colors: InputColors,
+    configs: InputConfigs,
     enabled: Boolean,
 ) {
     val backgroundColor = if (enabled) colors.container else colors.disabledContainer
@@ -136,6 +144,7 @@ private fun InputFieldWithLabel(
             hint = type.hint,
             enabled = enabled,
             colors = colors,
+            configs = configs,
             keyboardType = type.keyboardType,
             onTextChanged = type.onTextChanged,
             onDone = type.onDone,
@@ -148,6 +157,7 @@ private fun InputFieldWithIcon(
     type: InputField.Type.WithIcon,
     modifier: Modifier = Modifier,
     colors: InputColors,
+    configs: InputConfigs,
     enabled: Boolean,
 ) {
     val backgroundColor = if (enabled) colors.container else colors.disabledContainer
@@ -163,6 +173,7 @@ private fun InputFieldWithIcon(
             hint = type.hint,
             enabled = enabled,
             colors = colors,
+            configs = configs,
             keyboardType = type.keyboardType,
             onTextChanged = type.onTextChanged,
             onDone = type.onDone,
@@ -173,7 +184,7 @@ private fun InputFieldWithIcon(
 @Composable
 private fun containerModifier(backgroundColor: Color) =
     Modifier
-        .shadow(elevation = 3.dp, shape = AppTheme.shape.full)
+        .shadow(elevation = 3.dp, shape = AppTheme.shape.xlarge)
         .background(color = backgroundColor)
         .padding(all = 16.dp)
 
@@ -190,21 +201,25 @@ private fun Preview() {
             InputField(
                 type = InputField.Type.Text(
                     value = "Username",
-                )
+                ),
             )
 
             InputField(
                 type = InputField.Type.WithLabel(
                     label = "Username",
                     value = "Username",
-                )
+                ),
             )
 
             InputField(
+                modifier = Modifier.height(92.dp),
                 type = InputField.Type.WithIcon(
                     icon = IconComposer.Icon(Icons.Rounded.CalendarMonth),
                     value = "Username",
-                )
+                ),
+                configs = InputDefaults.configs(
+                    singleLine = false
+                ),
             )
         }
     }

@@ -17,8 +17,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @SuppressLint("MissingPermission")
+@Singleton
 class PrinterService @Inject constructor(
     private val bluetoothStateManager: BluetoothStateManager,
     private val bluetoothScanner: BluetoothScanner,
