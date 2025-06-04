@@ -3,8 +3,6 @@ package com.christsondev.components.inputfield
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import com.christsondev.components.theme.AppTheme
-import kotlin.math.min
-import kotlin.math.sin
 
 data class InputColors(
     val text: Color = Color.Unspecified,
@@ -18,6 +16,7 @@ data class InputConfigs(
     val singleLine: Boolean,
     val minLines: Int,
     val maxLines: Int,
+    val fixedCursor: Boolean,
 )
 
 object InputDefaults {
@@ -42,9 +41,11 @@ object InputDefaults {
         singleLine: Boolean = true,
         minLines: Int = 1,
         maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
+        fixedCursor: Boolean = false,
     ) = InputConfigs(
         singleLine = singleLine,
         minLines = minLines,
         maxLines = maxLines,
+        fixedCursor = fixedCursor,
     )
 }

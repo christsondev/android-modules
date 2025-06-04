@@ -31,7 +31,7 @@ object InputField {
             val onDone: (String) -> Unit = {},
         ): Type
 
-        data class WithLabel(
+        data class Label(
             val label: String,
             val value: String = "",
             val hint: String = "",
@@ -41,8 +41,17 @@ object InputField {
             val onDone: (String) -> Unit = {},
         ): Type
 
-        data class WithIcon(
+        data class Icon(
             val icon: IconComposer,
+            val value: String = "",
+            val hint: String = "",
+            val keyboardType: KeyboardType = KeyboardType.Text,
+            val onTextChanged: (String) -> Unit = {},
+            val onDone: (String) -> Unit = {},
+        ) : Type
+
+        data class LeadingContent(
+            val content: @Composable () -> Unit,
             val value: String = "",
             val hint: String = "",
             val keyboardType: KeyboardType = KeyboardType.Text,
@@ -71,7 +80,7 @@ fun InputField(
             )
         }
 
-        is InputField.Type.WithLabel -> {
+        is InputField.Type.Label -> {
             InputFieldWithLabel(
                 modifier = modifier,
                 type = type,
@@ -81,8 +90,18 @@ fun InputField(
             )
         }
 
-        is InputField.Type.WithIcon -> {
+        is InputField.Type.Icon -> {
             InputFieldWithIcon(
+                modifier = modifier,
+                type = type,
+                colors = colors,
+                configs = configs,
+                enabled = enabled,
+            )
+        }
+
+        is InputField.Type.LeadingContent -> {
+            InputFieldWithLeadingContent(
                 modifier = modifier,
                 type = type,
                 colors = colors,
@@ -118,7 +137,7 @@ private fun InputFieldText(
 
 @Composable
 private fun InputFieldWithLabel(
-    type: InputField.Type.WithLabel,
+    type: InputField.Type.Label,
     modifier: Modifier = Modifier,
     colors: InputColors,
     configs: InputConfigs,
@@ -154,7 +173,7 @@ private fun InputFieldWithLabel(
 
 @Composable
 private fun InputFieldWithIcon(
-    type: InputField.Type.WithIcon,
+    type: InputField.Type.Icon,
     modifier: Modifier = Modifier,
     colors: InputColors,
     configs: InputConfigs,
@@ -165,8 +184,39 @@ private fun InputFieldWithIcon(
     Row(
         modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         type.icon.Compose(Modifier.size(24.dp))
+
+        InputText(
+            value = type.value,
+            hint = type.hint,
+            enabled = enabled,
+            colors = colors,
+            configs = configs,
+            keyboardType = type.keyboardType,
+            onTextChanged = type.onTextChanged,
+            onDone = type.onDone,
+        )
+    }
+}
+
+@Composable
+private fun InputFieldWithLeadingContent(
+    type: InputField.Type.LeadingContent,
+    modifier: Modifier = Modifier,
+    colors: InputColors,
+    configs: InputConfigs,
+    enabled: Boolean,
+) {
+    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
+
+    Row(
+        modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        type.content.invoke()
 
         InputText(
             value = type.value,
@@ -205,7 +255,7 @@ private fun Preview() {
             )
 
             InputField(
-                type = InputField.Type.WithLabel(
+                type = InputField.Type.Label(
                     label = "Username",
                     value = "Username",
                 ),
@@ -213,7 +263,7 @@ private fun Preview() {
 
             InputField(
                 modifier = Modifier.height(92.dp),
-                type = InputField.Type.WithIcon(
+                type = InputField.Type.Icon(
                     icon = IconComposer.Icon(Icons.Rounded.CalendarMonth),
                     value = "Username",
                 ),
