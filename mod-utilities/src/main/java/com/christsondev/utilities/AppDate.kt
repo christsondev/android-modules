@@ -7,24 +7,9 @@ import java.util.Locale
 
 class AppDate(val timeInMillis: Long) {
 
-    /**
-     * @param separator any value e.g: slash `/` or comma `,` or dash `-`
-     * @return dd<separator>MM<separator>yyyy e.g: dd-MM-yyyy or dd/MM/yyyy
-     */
-    fun toDayMonthYear(separator: String): String =
+    fun format(format: DateFormat, locale: Locale = Locale.getDefault()) =
         if (timeInMillis > 0) {
-            SimpleDateFormat("dd" + separator + "MM" + separator + "yyyy",
-                Locale.getDefault()).format(Date(timeInMillis))
-        } else {
-            ""
-        }
-
-    /**
-     * @return hh:mm a
-     */
-    fun toTime(): String =
-        if (timeInMillis > 0) {
-            SimpleDateFormat("hh:mm a", Locale.getDefault()).format(Date(timeInMillis))
+            SimpleDateFormat(format.get(), locale).format(Date(timeInMillis))
         } else {
             ""
         }
@@ -39,5 +24,21 @@ class AppDate(val timeInMillis: Long) {
 
     companion object {
         fun now() = AppDate(Calendar.getInstance().timeInMillis)
+    }
+
+    sealed interface DateFormat {
+        fun get(): String
+
+        data class NumericMonth(val separator: String) : DateFormat {
+            override fun get() = "dd" + separator + "MM" + separator + "yyyy"
+        }
+
+        data class TextMonth(val separator: String) : DateFormat {
+            override fun get() = "dd" + separator + "MMM" + separator + "yyyy"
+        }
+
+        data object StandardTime : DateFormat {
+            override fun get() = "hh:mm a"
+        }
     }
 }
