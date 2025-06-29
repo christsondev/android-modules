@@ -20,19 +20,53 @@ class AppDate(val timeInMillis: Long) {
 
     fun toCalendar() = Calendar.getInstance().apply { timeInMillis = this@AppDate.timeInMillis }
 
-    private fun isBefore(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean {
+    fun isEqual(date: AppDate, unit: TimeUnit): Boolean {
+        val thisCalendar = this.toCalendar()
+        val otherCalendar = date.toCalendar()
+
+        val thisYear = thisCalendar.get(Calendar.YEAR)
+        val otherYear = otherCalendar.get(Calendar.YEAR)
+        val thisMonth = thisCalendar.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
+        val otherMonth = otherCalendar.get(Calendar.MONTH)
+
+        return when (unit) {
+            TimeUnit.MILLIS -> this.timeInMillis == date.timeInMillis
+            TimeUnit.SECONDS -> (this.timeInMillis / 1000) == (date.timeInMillis / 1000)
+            TimeUnit.DAYS -> {
+                thisYear == otherYear &&
+                    thisCalendar.get(Calendar.DAY_OF_YEAR) == otherCalendar.get(Calendar.DAY_OF_YEAR)
+            }
+            TimeUnit.MONTHS -> {
+                thisYear == otherYear && thisMonth == otherMonth
+            }
+            TimeUnit.YEARS -> {
+                thisYear == otherYear
+            }
+        }
+    }
+
+    fun isBefore(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean {
+        val thisCalendar = this.toCalendar()
+        val otherCalendar = date.toCalendar()
+
+        val thisYear = thisCalendar.get(Calendar.YEAR)
+        val otherYear = otherCalendar.get(Calendar.YEAR)
+        val thisMonth = thisCalendar.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
+        val otherMonth = otherCalendar.get(Calendar.MONTH)
+
         return when (unit) {
             TimeUnit.MILLIS -> this.timeInMillis < date.timeInMillis
             TimeUnit.SECONDS -> (this.timeInMillis / 1000) < (date.timeInMillis / 1000)
+            TimeUnit.DAYS -> {
+                if (thisYear < otherYear) {
+                    true
+                } else if (thisYear > otherYear) {
+                    false
+                } else {
+                    thisCalendar.get(Calendar.DAY_OF_YEAR) < otherCalendar.get(Calendar.DAY_OF_YEAR)
+                }
+            }
             TimeUnit.MONTHS -> {
-                val currentCalender = this.toCalendar()
-                val otherCalendar = date.toCalendar()
-
-                val thisYear = currentCalender.get(Calendar.YEAR)
-                val otherYear = otherCalendar.get(Calendar.YEAR)
-                val thisMonth = currentCalender.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
-                val otherMonth = otherCalendar.get(Calendar.MONTH)
-
                 if (thisYear < otherYear) {
                     true
                 } else if (thisYear > otherYear) {
@@ -42,24 +76,33 @@ class AppDate(val timeInMillis: Long) {
                 }
             }
             TimeUnit.YEARS -> {
-                this.toCalendar().get(Calendar.YEAR) < date.toCalendar().get(Calendar.YEAR)
+                thisYear < otherYear
             }
         }
     }
 
-    private fun isAfter(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean {
+    fun isAfter(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean {
+        val thisCalendar = this.toCalendar()
+        val otherCalendar = date.toCalendar()
+
+        val thisYear = thisCalendar.get(Calendar.YEAR)
+        val otherYear = otherCalendar.get(Calendar.YEAR)
+        val thisMonth = thisCalendar.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
+        val otherMonth = otherCalendar.get(Calendar.MONTH)
+
         return when (unit) {
             TimeUnit.MILLIS -> this.timeInMillis > date.timeInMillis
             TimeUnit.SECONDS -> (this.timeInMillis / 1000) > (date.timeInMillis / 1000)
+            TimeUnit.DAYS -> {
+                if (thisYear > otherYear) {
+                    true
+                } else if (thisYear < otherYear) {
+                    false
+                } else {
+                    thisCalendar.get(Calendar.DAY_OF_YEAR) > otherCalendar.get(Calendar.DAY_OF_YEAR)
+                }
+            }
             TimeUnit.MONTHS -> {
-                val currentCalender = this.toCalendar()
-                val otherCalendar = date.toCalendar()
-
-                val thisYear = currentCalender.get(Calendar.YEAR)
-                val otherYear = otherCalendar.get(Calendar.YEAR)
-                val thisMonth = currentCalender.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
-                val otherMonth = otherCalendar.get(Calendar.MONTH)
-
                 if (thisYear > otherYear) {
                     true
                 } else if (thisYear < otherYear) {
@@ -69,7 +112,7 @@ class AppDate(val timeInMillis: Long) {
                 }
             }
             TimeUnit.YEARS -> {
-                this.toCalendar().get(Calendar.YEAR) > date.toCalendar().get(Calendar.YEAR)
+               thisYear > otherYear
             }
         }
     }
@@ -80,6 +123,9 @@ class AppDate(val timeInMillis: Long) {
     fun isAfterOrEquals(date: AppDate, timeUnit: TimeUnit = TimeUnit.MILLIS) =
         !isBefore(date, timeUnit)
 
+    fun isBetween(startDate: AppDate, endDate: AppDate, unit: TimeUnit) =
+        isAfterOrEquals(startDate, unit) && isBeforeOrEquals(endDate, unit)
+
     companion object {
         fun now() = AppDate(Calendar.getInstance().timeInMillis)
     }
@@ -87,6 +133,7 @@ class AppDate(val timeInMillis: Long) {
     enum class TimeUnit {
         MILLIS,
         SECONDS,
+        DAYS,
         MONTHS,
         YEARS
     }
