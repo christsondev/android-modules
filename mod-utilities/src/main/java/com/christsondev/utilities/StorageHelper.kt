@@ -15,7 +15,7 @@ class StorageHelper(
     fun save(key: String, value: String) =
         sharedPreferences.edit { putString(key, value) }
 
-    fun get(key: String, defaultValue: String) =
+    fun get(key: String, defaultValue: String?) =
         sharedPreferences.getString(key, defaultValue)
 
     // Boolean
@@ -56,20 +56,85 @@ class StorageHelper(
     fun <T> save(key: String, type: Type, value: T) =
         save(key, moshi.adapter<T>(type).toJson(value))
 
+    // region Flow
+
     fun asFlow(key: String, defaultValue: String) = callbackFlow {
-        // Create a listener for preference changes
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
             if (changedKey == key) {
-                trySend(sharedPreferences.getString(key, defaultValue) ?: defaultValue)
+                trySend(sharedPreferences.getString(key, defaultValue))
             }
         }
-        // Register the listener
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-        // Emit the initial value
-        trySend(sharedPreferences.getString(key, defaultValue) ?: defaultValue)
-        // Unregister the listener when the flow is closed
+        trySend(sharedPreferences.getString(key, defaultValue))
         awaitClose {
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
         }
     }
+
+    fun asFlow(key: String, defaultValue: Boolean) = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == key) {
+                trySend(sharedPreferences.getBoolean(key, defaultValue))
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        trySend(sharedPreferences.getBoolean(key, defaultValue))
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    fun asFlow(key: String, defaultValue: Int) = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == key) {
+                trySend(sharedPreferences.getInt(key, defaultValue))
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        trySend(sharedPreferences.getInt(key, defaultValue))
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    fun asFlow(key: String, defaultValue: Long) = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == key) {
+                trySend(sharedPreferences.getLong(key, defaultValue))
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        trySend(sharedPreferences.getLong(key, defaultValue))
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    fun asFlow(key: String, defaultValue: Float) = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == key) {
+                trySend(sharedPreferences.getFloat(key, defaultValue))
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        trySend(sharedPreferences.getFloat(key, defaultValue))
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    fun<T> asFlow(key: String, type: Type, defaultValue: T) = callbackFlow {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, changedKey ->
+            if (changedKey == key) {
+                trySend(get(key, type, defaultValue))
+            }
+        }
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        trySend(get(key, type, defaultValue))
+        awaitClose {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+        }
+    }
+
+    // endregion Flow
 }
