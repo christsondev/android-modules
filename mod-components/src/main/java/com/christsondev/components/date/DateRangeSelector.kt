@@ -6,11 +6,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -20,7 +21,9 @@ import com.christsondev.components.button.Button
 import com.christsondev.components.button.ButtonColors
 import com.christsondev.components.theme.AppMultiPreview
 import com.christsondev.components.theme.AppTheme
+import com.christsondev.components.theme.LocalAppLocale
 import com.christsondev.utilities.AppDate
+import com.christsondev.utilities.AppUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,11 +37,16 @@ fun DateRangeSelector(
     colors: DateSelectorColors = DateSelectorDefaults.colors(),
     onDateChanged: (AppDate?, AppDate?) -> Unit,
 ) {
+    val timeZoneOffset = AppUtils.getLocalTimezoneOffsetMillis()
+    val locale = LocalAppLocale.current
     var showDialog by rememberSaveable { mutableStateOf(false) }
-    val state = rememberDateRangePickerState(
-        initialSelectedStartDateMillis = initialStartDate.timeInMillis,
-        initialSelectedEndDateMillis = initialEndDate.timeInMillis,
-    )
+    val state = remember(initialStartDate, initialEndDate) {
+        DateRangePickerState(
+            locale = locale,
+            initialSelectedStartDateMillis = initialStartDate.timeInMillis + timeZoneOffset,
+            initialSelectedEndDateMillis = initialEndDate.timeInMillis + timeZoneOffset,
+        )
+    }
 
     val iconTint = if (enabled) colors.font else colors.disabledFont
     val buttonColors = ButtonColors(
