@@ -118,7 +118,7 @@ class SecureStorageHelper(
     // --- OBJECT ---
 
     suspend fun <T : Any> save(key: String, type: Type, value: T) =
-        saveString(key, moshi.adapter<T>(type).toJson(value))
+        save(key, moshi.adapter<T>(type).toJson(value))
 
     fun <T> get(key: String, type: Type, defaultValue: T) =
         runCatching {
