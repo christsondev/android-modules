@@ -5,12 +5,15 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.lang.reflect.Type
 
 class SecureStorageHelper(
     private val dataStore: DataStore<Preferences>,
     private val secureStorage: SecureStorage, // Handles Tink encryption/decryption
+    private val moshi: Moshi,
 ) {
     // --- Core Save Logic (Generic) ---
 
@@ -69,38 +72,59 @@ class SecureStorageHelper(
     // ############################# PUBLIC API ##############################
     // #######################################################################
 
-    // --- STRING (e.g., saveString("auth_token", "jwt123")) ---
+    // --- STRING ---
 
-    suspend fun saveString(key: String, value: String) =
+    suspend fun save(key: String, value: String) =
         saveEncrypted(key, value)
 
-    fun getStringFlow(key: String, defaultValue: String): Flow<String> =
+    fun get(key: String, defaultValue: String): Flow<String> =
         getDecrypted(key, defaultValue) { it }
 
 
-    // --- BOOLEAN (e.g., saveBoolean("is_premium_user", true)) ---
+    // --- BOOLEAN ---
 
-    suspend fun saveBoolean(key: String, value: Boolean) =
+    suspend fun save(key: String, value: Boolean) =
         saveEncrypted(key, value)
 
-    fun getBooleanFlow(key: String, defaultValue: Boolean): Flow<Boolean> =
+    fun get(key: String, defaultValue: Boolean): Flow<Boolean> =
         getDecrypted(key, defaultValue) { it.toBoolean() }
 
 
-    // --- INTEGER (e.g., saveInt("login_attempts", 3)) ---
+    // --- INTEGER ---
 
-    suspend fun saveInt(key: String, value: Int) =
+    suspend fun save(key: String, value: Int) =
         saveEncrypted(key, value)
 
-    fun getIntFlow(key: String, defaultValue: Int): Flow<Int> =
+    fun get(key: String, defaultValue: Int): Flow<Int> =
         getDecrypted(key, defaultValue) { it.toIntOrNull() ?: defaultValue }
 
+    // --- LONG ---
 
-    // --- FLOAT (e.g., saveFloat("app_version", 2.1f)) ---
-
-    suspend fun saveFloat(key: String, value: Float) =
+    suspend fun save(key: String, value: Long) =
         saveEncrypted(key, value)
 
-    fun getFloatFlow(key: String, defaultValue: Float): Flow<Float> =
+    fun get(key: String, defaultValue: Long): Flow<Long> =
+        getDecrypted(key, defaultValue) { it.toLongOrNull() ?: defaultValue }
+
+
+    // --- FLOAT ---
+
+    suspend fun save(key: String, value: Float) =
+        saveEncrypted(key, value)
+
+    fun get(key: String, defaultValue: Float): Flow<Float> =
         getDecrypted(key, defaultValue) { it.toFloatOrNull() ?: defaultValue }
+
+    // --- OBJECT ---
+
+    suspend fun <T : Any> save(key: String, type: Type, value: T) =
+        saveString(key, moshi.adapter<T>(type).toJson(value))
+
+    fun <T> get(key: String, type: Type, defaultValue: T) =
+        runCatching {
+            getDecrypted(key, defaultValue) { jsonString ->
+                moshi.adapter<T>(type).fromJson(jsonString) ?: defaultValue
+            }
+        }.getOrDefault(defaultValue)
+
 }
