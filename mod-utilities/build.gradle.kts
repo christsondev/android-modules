@@ -47,6 +47,8 @@ dependencies {
     implementation(libs.material)
 
     implementation(libs.moshi.kotlin)
+    implementation(libs.androidx.datastore)
+    implementation(libs.tink)
 }
 
 // Jitpack

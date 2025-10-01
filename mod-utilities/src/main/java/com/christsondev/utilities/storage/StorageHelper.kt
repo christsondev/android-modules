@@ -1,4 +1,4 @@
-package com.christsondev.utilities
+package com.christsondev.utilities.storage
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
