@@ -18,16 +18,16 @@ class SecureStorageHelper(
     // --- Core Save Logic (Generic) ---
 
     private suspend fun <T> saveEncrypted(keyName: String, value: T) {
+        val jsonString = value.toString()
+        saveEncrypted(keyName, jsonString)
+    }
+
+    private suspend fun saveEncrypted(keyName: String, jsonString: String) {
         // Create the string key dynamically
         val key = stringPreferencesKey(keyName)
-
-        // 1. Convert value to String for encryption
-        val plaintext = value.toString()
-
-        // 2. Encrypt the string
-        val encryptedPasswordBytes = secureStorage.encrypt(plaintext)
-
-        // 3. Encode the encrypted bytes to a Base64 String for DataStore
+        // Encrypt the string
+        val encryptedPasswordBytes = secureStorage.encrypt(jsonString)
+        // Encode the encrypted bytes to a Base64 String for DataStore
         val encryptedBase64 = Base64.encodeToString(encryptedPasswordBytes, Base64.DEFAULT)
 
         dataStore.edit { preferences ->
@@ -118,7 +118,7 @@ class SecureStorageHelper(
     // --- OBJECT ---
 
     suspend fun <T> save(key: String, type: Type, value: T) =
-        save(key, moshi.adapter<T>(type).toJson(value))
+        saveEncrypted(key, moshi.adapter<T>(type).toJson(value))
 
     fun <T> get(key: String, type: Type, defaultValue: T) =
         getDecrypted(key, defaultValue) { jsonString ->
