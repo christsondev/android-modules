@@ -45,7 +45,7 @@ fun Dialog(
     ) {
         Column(
             modifier = Modifier
-                .clip(AppTheme.dimension.shape.large)
+                .clip(AppTheme.shape.large)
                 .background(AppTheme.color.surfaceContainer)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),

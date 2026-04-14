@@ -49,12 +49,12 @@ fun<T> Dropdown(
         mutableIntStateOf(items.getIndexByItem(selectedValue, -1))
     }
 
-    val cornerRadius = AppTheme.dimension.shape.large as RoundedCornerShape
+    val cornerRadius = AppTheme.shape.large as RoundedCornerShape
     val arrowIcon = if (expanded) Icons.Rounded.ArrowDropUp else Icons.Rounded.ArrowDropDown
 
     Card(
         modifier = modifier,
-        shape = AppTheme.dimension.shape.full,
+        shape = AppTheme.shape.full,
         enabled = enabled,
         colors = CardDefaults.cardColors(containerColor = colors.selectedContainer),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 3.dp),
@@ -107,7 +107,7 @@ fun<T> Dropdown(
                     Box(
                         modifier = Modifier
                             .padding(vertical = 4.dp, horizontal = 8.dp)
-                            .clip(shape = AppTheme.dimension.shape.large)
+                            .clip(shape = AppTheme.shape.large)
                             .background(color = backgroundColor),
                     ) {
                         DropdownMenuItem(
