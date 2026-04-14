@@ -99,7 +99,7 @@ fun CurvedBottomBar(
                             y = 0,
                         )
                     }
-                    .shadow(elevation = 2.dp, shape = AppTheme.dimension.shape.full)
+                    .shadow(elevation = 2.dp, shape = AppTheme.shape.full)
                     .background(color = containerColor),
             ) {
                 IconComposer.Icon(

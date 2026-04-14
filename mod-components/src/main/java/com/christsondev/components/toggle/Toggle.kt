@@ -57,7 +57,7 @@ fun<T> Toggle(
 
     ConstraintLayout (
         modifier = Modifier
-            .shadow(elevation = 3.dp, shape = AppTheme.dimension.shape.large)
+            .shadow(elevation = 3.dp, shape = AppTheme.shape.large)
             .background(containerColor)
             .onGloballyPositioned {
                 parentWidth = it.size.width
@@ -78,7 +78,7 @@ fun<T> Toggle(
                     }
                     .background(
                         color = colors.selectedContainer,
-                        shape = AppTheme.dimension.shape.large,
+                        shape = AppTheme.shape.large,
                     ),
             )
         }
@@ -109,7 +109,7 @@ fun<T> Toggle(
                 Text(
                     modifier = Modifier
                         .weight(1f)
-                        .clip(AppTheme.dimension.shape.large)
+                        .clip(AppTheme.shape.large)
                         .then(clickableModifier)
                         .padding(16.dp),
                     text = item.label,
