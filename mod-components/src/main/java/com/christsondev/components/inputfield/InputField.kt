@@ -234,7 +234,7 @@ private fun InputFieldWithLeadingContent(
 @Composable
 private fun containerModifier(backgroundColor: Color) =
     Modifier
-        .shadow(elevation = 3.dp, shape = AppTheme.shape.xlarge)
+        .shadow(elevation = 3.dp, shape = AppTheme.dimension.shape.xlarge)
         .background(color = backgroundColor)
         .padding(all = 16.dp)
 

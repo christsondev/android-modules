@@ -1,6 +1,7 @@
 package com.christsondev.components.list
 
 import androidx.compose.runtime.Composable
+import com.christsondev.components.IconComposer
 
 object ListItem {
     sealed interface Type {
@@ -11,6 +12,7 @@ object ListItem {
 
         data class Chevron(
             val onClick: () -> Unit,
+            val chevronIcon: IconComposer = IconComposer.ChevronRight(),
         ) : Type
 
         data class Expandable(

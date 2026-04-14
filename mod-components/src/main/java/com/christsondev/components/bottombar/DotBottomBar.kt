@@ -96,7 +96,7 @@ fun DotBottomBar(
                         y = 52.dp.toPx().toInt(),
                     )
                 }
-                .background(color = colors.selected, shape = AppTheme.shape.full)
+                .background(color = colors.selected, shape = AppTheme.dimension.shape.full)
                 .size(buttonSize),
         )
     }

@@ -25,7 +25,7 @@ fun AppTheme(
     LocalContentColor provides if (useDarkTheme) Color.White else Color.Black,
     LocalAppColor provides if (useDarkTheme) colors.dark else colors.light,
     LocalAppTypography provides appTypography,
-    LocalAppShape provides appShape,
+    LocalAppDimension provides appDimension,
     LocalAppLocale provides locale,
 ) {
     if (!isPreview) {
@@ -45,10 +45,10 @@ object AppTheme {
         @ReadOnlyComposable
         @Composable
         get() = LocalAppTypography.current
-    val shape: AppShape
+    val dimension: AppDimension
         @ReadOnlyComposable
         @Composable
-        get() = LocalAppShape.current
+        get() = LocalAppDimension.current
 
     object Default {
 

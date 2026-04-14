@@ -27,7 +27,7 @@ enum class ButtonContainer {
         OUTLINE -> Modifier.border(
             width = 1.dp,
             color = containerColor,
-            shape = AppTheme.shape.full,
+            shape = AppTheme.dimension.shape.full,
         )
     }
 }

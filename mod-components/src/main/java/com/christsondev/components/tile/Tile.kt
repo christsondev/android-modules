@@ -129,7 +129,7 @@ private fun Modifier.appendModifier(
     contentPadding: PaddingValues,
     onClick: (() -> Unit)?,
 ) =
-    this.shadow(elevation = 3.dp, shape = AppTheme.shape.medium)
+    this.shadow(elevation = 3.dp, shape = AppTheme.dimension.shape.medium)
         .background(color = backgroundColor)
         .then(
             onClick?.let {
