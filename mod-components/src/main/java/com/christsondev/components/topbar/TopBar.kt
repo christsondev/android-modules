@@ -18,6 +18,7 @@ import com.christsondev.components.theme.AppTheme
 @Composable
 fun TopBar(
     title: String? = null,
+    backButtonIcon: IconComposer = IconComposer.Back(),
     onBack: (() -> Unit)? = null,
     onContent: @Composable (() -> Unit)? = null,
 ) {
@@ -27,7 +28,7 @@ fun TopBar(
                 modifier = Modifier.align(Alignment.CenterStart),
                 onClick = onBack,
             ) {
-                IconComposer.Back().Compose(Modifier.size(24.dp))
+                backButtonIcon.Compose(Modifier.size(24.dp))
             }
         }
 

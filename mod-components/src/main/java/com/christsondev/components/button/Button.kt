@@ -62,9 +62,9 @@ fun Button(
         modifier = Modifier
             .shadow(
                 elevation = elevation,
-                shape = AppTheme.shape.full,
+                shape = AppTheme.dimension.shape.full,
             )
-            .clip(shape = AppTheme.shape.full)
+            .clip(shape = AppTheme.dimension.shape.full)
             .then(modifier)
             .then(backgroundModifier)
             .then(clickModifier)

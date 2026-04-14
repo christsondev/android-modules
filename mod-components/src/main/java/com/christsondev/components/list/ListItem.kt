@@ -68,7 +68,7 @@ fun ListItem(
                 description = description,
                 label = label,
                 leadingIcon = leadingIcon,
-                trailingContent = { Chevron() },
+                trailingContent = { Chevron(type.chevronIcon) },
                 contentPadding = contentPadding,
             )
         }
@@ -162,8 +162,8 @@ private fun ListItemContent(
 }
 
 @Composable
-private fun Chevron() {
-    IconComposer.ChevronRight().Compose(modifier = Modifier.size(36.dp).padding(12.dp))
+private fun Chevron(icon: IconComposer) {
+    icon.Compose(modifier = Modifier.size(36.dp).padding(12.dp))
 }
 
 @Composable

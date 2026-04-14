@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -28,7 +29,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.christsondev.components.IconComposer
@@ -41,71 +42,75 @@ fun CurvedBottomBar(
     items: List<BottomBarItem>,
     modifier: Modifier = Modifier,
     initialValue: Int = 0,
+    iconSize: Dp = 48.dp,
+    circleRadius: Dp = 36.dp,
     colors: BottomBarColors = BottomBarDefaults.colors(),
     containerColor: Color = AppTheme.color.surfaceContainer,
     onSelectedIndex: (Int) -> Unit,
 ) {
     var selectedIndex by remember { mutableIntStateOf(initialValue) }
-    val animationValue = remember { Animatable(0f) }
-
-    val screenWidth = ScreenWidth().dp
-    val itemWidth = screenWidth.div(items.size)
-    val halfButtonSize = 48.dp.div(2)
+    val animationValue = remember { Animatable(initialValue.toFloat()) }
 
     LaunchedEffect(selectedIndex) {
         animationValue.animateTo(targetValue = selectedIndex.toFloat())
     }
 
-    val positionOffset = itemWidth.times(animationValue.value).plus(itemWidth.div(2))
+    BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val itemWidth = maxWidth / items.size
+        val positionOffset = itemWidth * animationValue.value + (itemWidth / 2)
+        val halfButtonSize = iconSize / 2
 
-    Box(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp)
-                .graphicsLayer {
-                    clip = true
-                    shape = CurvedShape(
-                        positionOffset = positionOffset.toPx(),
-                        circleRadius = 36.dp.toPx(),
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+                    .graphicsLayer {
+                        clip = true
+                        shape = CurvedShape(
+                            positionOffset = positionOffset.toPx(),
+                            circleRadius = circleRadius.toPx(),
+                        )
+                    }
+                    .background(containerColor),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                items.forEachIndexed { index, item ->
+                    val fontColor = if (selectedIndex == index) colors.selected else colors.unselected
+                    Item(
+                        modifier = Modifier
+                            .clickableRipple {
+                                selectedIndex = index
+                                onSelectedIndex.invoke(index)
+                            },
+                        icon = item.icon,
+                        label = item.label,
+                        fontColor = fontColor,
                     )
                 }
-                .background(containerColor),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            items.forEachIndexed { index, item ->
-                val fontColor = if (selectedIndex == index) colors.selected else colors.unselected
-                Item(
-                    modifier = Modifier
-                        .clickableRipple {
-                        selectedIndex = index
-                        onSelectedIndex.invoke(index)
-                    },
-                    icon = item.icon,
-                    label = item.label,
-                    fontColor = fontColor,
+            }
+
+            Box(
+                modifier = Modifier
+                    .offset {
+                        IntOffset(
+                            x = (positionOffset - halfButtonSize).toPx().toInt(),
+                            y = 0,
+                        )
+                    }
+                    .shadow(elevation = 2.dp, shape = AppTheme.dimension.shape.full)
+                    .background(color = containerColor),
+            ) {
+                IconComposer.Icon(
+                    imageVector = items[selectedIndex].icon,
+                    tint = colors.selected,
+                ).Compose(
+                    Modifier
+                        .padding(12.dp)
+                        .size(iconSize / 2)
                 )
             }
-        }
-
-        Box(
-            modifier = Modifier
-                .offset {
-                    IntOffset(
-                        x = positionOffset.minus(halfButtonSize).toPx().toInt(),
-                        y = 0,
-                    )
-                }
-                .shadow(elevation = 2.dp, shape = AppTheme.shape.full)
-                .background(color = containerColor),
-        ) {
-            IconComposer.Icon(
-                imageVector = items[selectedIndex].icon,
-                tint = colors.selected,
-            ).Compose(Modifier
-                .padding(12.dp)
-                .size(24.dp))
         }
     }
 }
@@ -132,11 +137,6 @@ private fun RowScope.Item(
             color = fontColor,
         )
     }
-}
-
-@Composable
-private fun ScreenWidth(): Int {
-    return LocalConfiguration.current.screenWidthDp
 }
 
 @AppMultiPreview
