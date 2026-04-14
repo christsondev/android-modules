@@ -1,8 +1,8 @@
 package com.christsondev.components.bottombar
 
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.christsondev.components.IconComposer
 
 data class BottomBarItem(
-    val icon: ImageVector,
+    val icon: IconComposer,
     val label: String,
 )

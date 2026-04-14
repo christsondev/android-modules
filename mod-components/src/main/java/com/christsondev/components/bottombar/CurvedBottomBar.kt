@@ -1,5 +1,6 @@
 package com.christsondev.components.bottombar
 
+import android.graphics.BlurMaskFilter
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,10 +26,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.asAndroidPath
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -42,8 +50,6 @@ fun CurvedBottomBar(
     items: List<BottomBarItem>,
     modifier: Modifier = Modifier,
     initialValue: Int = 0,
-    iconSize: Dp = 48.dp,
-    circleRadius: Dp = 36.dp,
     colors: BottomBarColors = BottomBarDefaults.colors(),
     containerColor: Color = AppTheme.color.surfaceContainer,
     onSelectedIndex: (Int) -> Unit,
@@ -56,23 +62,29 @@ fun CurvedBottomBar(
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
+        val density = LocalDensity.current
         val itemWidth = maxWidth / items.size
         val positionOffset = itemWidth * animationValue.value + (itemWidth / 2)
-        val halfButtonSize = iconSize / 2
+        val halfButtonSize = 48.dp / 2
+
+        val shape = remember(positionOffset) {
+            CurvedShape(
+                positionOffset = with(density) { positionOffset.toPx() },
+                circleRadius = with(density) { 36.dp.toPx() },
+            )
+        }
 
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp)
-                    .graphicsLayer {
-                        clip = true
-                        shape = CurvedShape(
-                            positionOffset = positionOffset.toPx(),
-                            circleRadius = circleRadius.toPx(),
-                        )
-                    }
-                    .background(containerColor),
+                    .curvedShadow(
+                        shape = shape,
+                        elevation = 16.dp,
+                    )
+                    .background(containerColor, shape = shape)
+                    .clip(shape),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -99,17 +111,16 @@ fun CurvedBottomBar(
                             y = 0,
                         )
                     }
-                    .shadow(elevation = 2.dp, shape = AppTheme.shape.full)
+                    .shadow(elevation = 8.dp, shape = AppTheme.shape.full)
                     .background(color = containerColor),
             ) {
-                IconComposer.Icon(
-                    imageVector = items[selectedIndex].icon,
-                    tint = colors.selected,
-                ).Compose(
-                    Modifier
-                        .padding(12.dp)
-                        .size(iconSize / 2)
-                )
+                items[selectedIndex].icon
+                    .copyComposer(tint = colors.selected)
+                    .Compose(
+                        Modifier
+                            .padding(12.dp)
+                            .size(halfButtonSize),
+                    )
             }
         }
     }
@@ -117,7 +128,7 @@ fun CurvedBottomBar(
 
 @Composable
 private fun RowScope.Item(
-    icon: ImageVector,
+    icon: IconComposer,
     label: String,
     fontColor: Color,
     modifier: Modifier = Modifier,
@@ -129,7 +140,7 @@ private fun RowScope.Item(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        IconComposer.Icon(icon, tint = fontColor).Compose(Modifier.size(24.dp))
+        icon.copyComposer(fontColor).Compose(Modifier.size(24.dp))
 
         Text(
             text = label,
@@ -139,27 +150,51 @@ private fun RowScope.Item(
     }
 }
 
+private fun Modifier.curvedShadow(
+    shape: Shape,
+    elevation: Dp,
+    shadowColor: Color = Color.Black.copy(alpha = 0.2f),
+): Modifier = drawBehind {
+    val blurRadius = elevation.toPx()
+    drawIntoCanvas { canvas ->
+        val paint = androidx.compose.ui.graphics.Paint()
+            .asFrameworkPaint()
+            .apply {
+                color = shadowColor.toArgb()
+                maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
+            }
+        val outline = shape.createOutline(size, layoutDirection, this)
+        if (outline is Outline.Generic) {
+            canvas.nativeCanvas.drawPath(outline.path.asAndroidPath(), paint)
+        }
+    }
+}
+
 @AppMultiPreview
 @Composable
 private fun Preview() {
     AppTheme {
-        CurvedBottomBar(
-            items = listOf(
-                BottomBarItem(
-                    icon = Icons.Rounded.Dashboard,
-                    label = "Dashboard",
+        Box(
+            modifier = Modifier.background(AppTheme.color.surfaceContainer)
+        ) {
+            CurvedBottomBar(
+                items = listOf(
+                    BottomBarItem(
+                        icon = IconComposer.Icon(Icons.Rounded.Dashboard),
+                        label = "Dashboard",
+                    ),
+                    BottomBarItem(
+                        icon = IconComposer.Icon(Icons.Rounded.Home),
+                        label = "Home",
+                    ),
+                    BottomBarItem(
+                        icon = IconComposer.Icon(Icons.Rounded.Settings),
+                        label = "Settings",
+                    )
                 ),
-                BottomBarItem(
-                    icon = Icons.Rounded.Home,
-                    label = "Home",
-                ),
-                BottomBarItem(
-                    icon = Icons.Rounded.Settings,
-                    label = "Settings",
-                )
-            ),
-            initialValue = 1,
-            onSelectedIndex = { },
-        )
+                initialValue = 1,
+                onSelectedIndex = { },
+            )
+        }
     }
 }
