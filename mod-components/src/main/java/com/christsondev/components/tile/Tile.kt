@@ -1,7 +1,6 @@
 package com.christsondev.components.tile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -47,14 +46,16 @@ data object Tile {
 fun Tile(
     type: Tile.Type.Box,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = AppTheme.color.background,
+    containerColor: Color = AppTheme.color.background,
+    tileBorder: TileBorder = TileBorderDefaults.elevated(),
     contentPadding: PaddingValues = PaddingValues(),
     onClick: (() -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
         modifier = modifier.appendModifier(
-            backgroundColor = backgroundColor,
+            containerColor = containerColor,
+            tileBorder = tileBorder,
             contentPadding = contentPadding,
             onClick = onClick,
         ),
@@ -66,14 +67,16 @@ fun Tile(
 fun Tile(
     type: Tile.Type.Column,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = AppTheme.color.background,
+    containerColor: Color = AppTheme.color.background,
+    tileBorder: TileBorder = TileBorderDefaults.elevated(),
     contentPadding: PaddingValues = PaddingValues(),
     onClick: (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = modifier.appendModifier(
-            backgroundColor = backgroundColor,
+            containerColor = containerColor,
+            tileBorder = tileBorder,
             contentPadding = contentPadding,
             onClick = onClick,
         ),
@@ -87,14 +90,16 @@ fun Tile(
 fun Tile(
     type: Tile.Type.Row,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = AppTheme.color.background,
+    containerColor: Color = AppTheme.color.background,
+    tileBorder: TileBorder = TileBorderDefaults.elevated(),
     contentPadding: PaddingValues = PaddingValues(),
     onClick: (() -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier = modifier.appendModifier(
-            backgroundColor = backgroundColor,
+            containerColor = containerColor,
+            tileBorder = tileBorder,
             contentPadding = contentPadding,
             onClick = onClick,
         ),
@@ -108,14 +113,16 @@ fun Tile(
 fun Tile(
     type: Tile.Type.ConstraintLayout,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = AppTheme.color.background,
+    containerColor: Color = AppTheme.color.background,
+    tileBorder: TileBorder = TileBorderDefaults.elevated(),
     contentPadding: PaddingValues = PaddingValues(),
     onClick: (() -> Unit)? = null,
     content: @Composable ConstraintLayoutScope.() -> Unit,
 ) {
     ConstraintLayout(
         modifier = modifier.appendModifier(
-            backgroundColor = backgroundColor,
+            containerColor = containerColor,
+            tileBorder = tileBorder,
             contentPadding = contentPadding,
             onClick = onClick,
         ),
@@ -125,31 +132,47 @@ fun Tile(
 
 @Composable
 private fun Modifier.appendModifier(
-    backgroundColor: Color,
+    containerColor: Color,
     contentPadding: PaddingValues,
-    onClick: (() -> Unit)?,
+    tileBorder: TileBorder,
+    onClick: (() -> Unit)? = null,
 ) =
-    this.shadow(elevation = 3.dp, shape = AppTheme.shape.medium)
-        .background(color = backgroundColor)
-        .then(
-            onClick?.let {
-                Modifier.clickableRipple(onClick = it)
-            }.orElse {
-                Modifier
-            }
-        )
+    this
+        .shadow(elevation = tileBorder.elevation, shape = tileBorder.cornerRadius, clip = true)
+        .background(color = containerColor)
+        .then(onClick?.let { Modifier.clickableRipple(onClick = it) }.orElse { Modifier })
         .padding(contentPadding)
+
 
 @AppMultiPreview
 @Composable
 private fun Preview() {
     AppTheme {
-        Tile(
-            type = Tile.Type.Box,
-            contentPadding = PaddingValues(16.dp),
-            content = {
-                Text("Testing")
-            },
-        )
+        Column(
+            modifier = Modifier
+                .background(Color.Red)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Tile(
+                modifier = Modifier.padding(8.dp),
+                type = Tile.Type.Box,
+                contentPadding = PaddingValues(16.dp),
+                tileBorder = TileBorderDefaults.elevated(),
+                content = {
+                    Text("Elevated")
+                },
+            )
+
+            Tile(
+                modifier = Modifier.padding(8.dp),
+                type = Tile.Type.Box,
+                contentPadding = PaddingValues(16.dp),
+                tileBorder = TileBorderDefaults.flat(),
+                content = {
+                    Text("Flat")
+                },
+            )
+        }
     }
 }

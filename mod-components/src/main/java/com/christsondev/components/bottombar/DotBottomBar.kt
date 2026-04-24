@@ -54,6 +54,7 @@ fun DotBottomBar(
     initialValue: Int = 0,
     colors: BottomBarColors = BottomBarDefaults.colors(),
     containerColor: Color = AppTheme.color.surfaceContainer,
+    shadowElevation: Dp = 8.dp,
     onSelectedIndex: (Int) -> Unit,
 ) {
     var selectedIndex by remember { mutableIntStateOf(initialValue) }
@@ -74,7 +75,7 @@ fun DotBottomBar(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .curvedShadow(shape = shape, elevation = 8.dp)
+                    .curvedShadow(shape = shape, elevation = shadowElevation)
                     .background(containerColor, shape = shape)
                     .clip(shape),
                 horizontalArrangement = Arrangement.SpaceAround,

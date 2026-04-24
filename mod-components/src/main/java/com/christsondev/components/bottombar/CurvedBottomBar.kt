@@ -52,6 +52,7 @@ fun CurvedBottomBar(
     initialValue: Int = 0,
     colors: BottomBarColors = BottomBarDefaults.colors(),
     containerColor: Color = AppTheme.color.surfaceContainer,
+    shadowElevation: Dp = 16.dp,
     onSelectedIndex: (Int) -> Unit,
 ) {
     var selectedIndex by remember { mutableIntStateOf(initialValue) }
@@ -81,7 +82,7 @@ fun CurvedBottomBar(
                     .padding(top = 10.dp)
                     .curvedShadow(
                         shape = shape,
-                        elevation = 16.dp,
+                        elevation = shadowElevation,
                     )
                     .background(containerColor, shape = shape)
                     .clip(shape),
