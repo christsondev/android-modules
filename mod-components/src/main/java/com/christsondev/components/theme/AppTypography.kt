@@ -22,12 +22,22 @@ data class AppTypography(
     val h1: TextStyle = TextStyle(
         fontSize = 32.sp,
         fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+    ),
+    val h1Bold: TextStyle = TextStyle(
+        fontSize = 32.sp,
+        fontFamily = nunitoFamily,
         fontWeight = FontWeight.Bold,
     ),
     val h2: TextStyle = TextStyle(
         fontSize = 28.sp,
         fontFamily = nunitoFamily,
         fontWeight = FontWeight.Normal,
+    ),
+    val h2Bold: TextStyle = TextStyle(
+        fontSize = 28.sp,
+        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Bold,
     ),
     val h3: TextStyle = TextStyle(
         fontSize = 24.sp,
@@ -39,18 +49,23 @@ data class AppTypography(
         fontFamily = nunitoFamily,
         fontWeight = FontWeight.Bold,
     ),
+    val h4: TextStyle = TextStyle(
+        fontSize = 20.sp,
+        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+    ),
+    val h4Bold: TextStyle = TextStyle(
+        fontSize = 20.sp,
+        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Bold,
+    ),
     val title: TextStyle = TextStyle(
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         fontFamily = nunitoFamily,
         fontWeight = FontWeight.Bold,
     ),
     val body: TextStyle = TextStyle(
-        fontSize = 16.sp,
-        fontFamily = nunitoFamily,
-        fontWeight = FontWeight.Normal,
-    ),
-    val description: TextStyle = TextStyle(
-        fontSize = 16.sp,
+        fontSize = 14.sp,
         fontFamily = nunitoFamily,
         fontWeight = FontWeight.Normal,
     ),
@@ -60,7 +75,22 @@ data class AppTypography(
         fontWeight = FontWeight.Bold,
     ),
     val smallBody: TextStyle = TextStyle(
-        fontSize = 14.sp,
+        fontSize = 12.sp,
+        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+    ),
+    val header: TextStyle = TextStyle(
+        fontSize = 18.sp,
+        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Bold,
+    ),
+    val description: TextStyle = TextStyle(
+        fontSize = 16.sp,
+        fontFamily = nunitoFamily,
+        fontWeight = FontWeight.Normal,
+    ),
+    val information: TextStyle = TextStyle(
+        fontSize = 10.sp,
         fontFamily = nunitoFamily,
         fontWeight = FontWeight.Normal,
     ),

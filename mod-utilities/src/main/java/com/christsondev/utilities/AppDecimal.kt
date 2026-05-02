@@ -3,28 +3,37 @@ package com.christsondev.utilities
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class AppDecimal private constructor(private val value: BigDecimal): Comparable<AppDecimal> {
-    // Primary constructor for internal use, ensures scale
-    init {
-        // Ensure the internal BigDecimal always maintains 2 decimal places with HALF_UP rounding
-        // This is a good place to enforce invariants for your custom type.
-        // We use a private constructor to ensure all instances are created via controlled means.
-        this.value.setScale(2, RoundingMode.HALF_UP)
-    }
+class AppDecimal private constructor(value: BigDecimal) : Comparable<AppDecimal> {
+    private val value: BigDecimal = value.setScale(2, RoundingMode.HALF_UP)
 
-    // --- Arithmetic Operations (delegating to internal BigDecimal) ---
-    operator fun plus(other: AppDecimal) =  AppDecimal(this.value.add(other.value))
+    // --- Arithmetic Operations ---
+    operator fun plus(other: AppDecimal) = AppDecimal(this.value.add(other.value))
+    operator fun plus(other: BigDecimal) = AppDecimal(this.value.add(other))
+    operator fun plus(other: Float) = plus(other.toDouble())
+    operator fun plus(other: Double) = AppDecimal(this.value.add(BigDecimal.valueOf(other)))
+    operator fun plus(other: Int) = plus(other.toLong())
+    operator fun plus(other: Long) = AppDecimal(this.value.add(BigDecimal.valueOf(other)))
 
     operator fun minus(other: AppDecimal) = AppDecimal(this.value.subtract(other.value))
+    operator fun minus(other: BigDecimal) = AppDecimal(this.value.subtract(other))
+    operator fun minus(other: Float) = minus(other.toDouble())
+    operator fun minus(other: Double) = AppDecimal(this.value.subtract(BigDecimal.valueOf(other)))
+    operator fun minus(other: Int) = minus(other.toLong())
+    operator fun minus(other: Long) = AppDecimal(this.value.subtract(BigDecimal.valueOf(other)))
 
-    operator fun times(multiplier: BigDecimal) = AppDecimal(this.value.multiply(multiplier))
+    operator fun times(other: AppDecimal) = AppDecimal(this.value.multiply(other.value))
+    operator fun times(other: BigDecimal) = AppDecimal(this.value.multiply(other))
+    operator fun times(other: Float) = times(other.toDouble())
+    operator fun times(other: Double) = AppDecimal(this.value.multiply(BigDecimal.valueOf(other)))
+    operator fun times(other: Int) = times(other.toLong())
+    operator fun times(other: Long) = AppDecimal(this.value.multiply(BigDecimal.valueOf(other)))
 
-    // When dividing, you might need to specify precision for the division itself
-    // and then set the final scale.
-    operator fun div(divisor: BigDecimal) = AppDecimal(this.value.divide(divisor, 2, RoundingMode.HALF_UP))
-
-    operator fun times(value: Int) = times(BigDecimal(value))
-    operator fun div(value: Int) = div(BigDecimal(value))
+    operator fun div(other: AppDecimal) = AppDecimal(this.value.divide(other.value, 2, RoundingMode.HALF_UP))
+    operator fun div(other: BigDecimal) = AppDecimal(this.value.divide(other, 2, RoundingMode.HALF_UP))
+    operator fun div(other: Float) = div(other.toDouble())
+    operator fun div(other: Double) = AppDecimal(this.value.divide(BigDecimal.valueOf(other), 2, RoundingMode.HALF_UP))
+    operator fun div(other: Int) = div(other.toLong())
+    operator fun div(other: Long) = AppDecimal(this.value.divide(BigDecimal.valueOf(other), 2, RoundingMode.HALF_UP))
 
     // --- Comparison Operations ---
     fun isZero() = value.compareTo(BigDecimal.ZERO) == 0
@@ -75,7 +84,13 @@ class AppDecimal private constructor(private val value: BigDecimal): Comparable<
 
         fun parse(bigDecimal: BigDecimal) = AppDecimal(bigDecimal)
 
-        fun parse(value: Float) = parse(value.toString())
+        fun parse(value: Float) = parse(value.toDouble())
+
+        fun parse(value: Double) = AppDecimal(BigDecimal.valueOf(value))
+
+        fun parse(value: Int) = parse(value.toLong())
+
+        fun parse(value: Long) = AppDecimal(BigDecimal.valueOf(value))
 
         fun parse(amountString: String, defaultValue: AppDecimal? = null): AppDecimal {
             return try {
