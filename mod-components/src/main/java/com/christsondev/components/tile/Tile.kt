@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
@@ -182,7 +183,7 @@ private fun Modifier.tileStyle(
     containerColor: Color,
     containerType: Tile.Container.Type,
     containerEffect: Tile.Container.Effect,
-    cornerRadius: RoundedCornerShape,
+    cornerRadius: Shape,
     contentPadding: PaddingValues,
     onClick: (() -> Unit)? = null,
 ): Modifier {
