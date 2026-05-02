@@ -7,9 +7,13 @@ import java.util.Locale
 
 class AppDate(val timeInMillis: Long) {
 
-    fun format(format: Formatter, locale: Locale = Locale.getDefault()) =
+    /**
+     * Formats the date using a raw [pattern].
+     * Returns an empty string if [timeInMillis] is 0 or less.
+     */
+    fun format(pattern: String, locale: Locale = Locale.getDefault()): String =
         if (timeInMillis > 0) {
-            SimpleDateFormat(format.get(), locale).format(Date(timeInMillis))
+            SimpleDateFormat(pattern, locale).format(Date(timeInMillis))
         } else {
             ""
         }
@@ -18,104 +22,56 @@ class AppDate(val timeInMillis: Long) {
 
     fun minus(millis: Long) = AppDate(timeInMillis - millis)
 
-    fun toCalendar() = Calendar.getInstance().apply { timeInMillis = this@AppDate.timeInMillis }
+    fun toCalendar(): Calendar =
+        Calendar.getInstance().apply { timeInMillis = this@AppDate.timeInMillis }
 
-    fun isEqual(date: AppDate, unit: TimeUnit): Boolean {
-        val thisCalendar = this.toCalendar()
-        val otherCalendar = date.toCalendar()
-
-        val thisYear = thisCalendar.get(Calendar.YEAR)
-        val otherYear = otherCalendar.get(Calendar.YEAR)
-        val thisMonth = thisCalendar.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
-        val otherMonth = otherCalendar.get(Calendar.MONTH)
-
-        return when (unit) {
-            TimeUnit.MILLIS -> this.timeInMillis == date.timeInMillis
-            TimeUnit.SECONDS -> (this.timeInMillis / 1000) == (date.timeInMillis / 1000)
+    /**
+     * Internal helper to truncate time units for accurate comparison.
+     */
+    private fun truncateTo(unit: TimeUnit): Long {
+        val cal = toCalendar()
+        when (unit) {
+            TimeUnit.MILLIS -> return timeInMillis
+            TimeUnit.SECONDS -> cal.set(Calendar.MILLISECOND, 0)
             TimeUnit.DAYS -> {
-                thisYear == otherYear &&
-                    thisCalendar.get(Calendar.DAY_OF_YEAR) == otherCalendar.get(Calendar.DAY_OF_YEAR)
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
             }
+
             TimeUnit.MONTHS -> {
-                thisYear == otherYear && thisMonth == otherMonth
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
             }
+
             TimeUnit.YEARS -> {
-                thisYear == otherYear
+                cal.set(Calendar.MONTH, 0)
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                cal.set(Calendar.HOUR_OF_DAY, 0)
+                cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0)
+                cal.set(Calendar.MILLISECOND, 0)
             }
         }
+        return cal.timeInMillis
     }
 
-    fun isBefore(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean {
-        val thisCalendar = this.toCalendar()
-        val otherCalendar = date.toCalendar()
+    fun isEqual(date: AppDate, unit: TimeUnit): Boolean =
+        truncateTo(unit) == date.truncateTo(unit)
 
-        val thisYear = thisCalendar.get(Calendar.YEAR)
-        val otherYear = otherCalendar.get(Calendar.YEAR)
-        val thisMonth = thisCalendar.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
-        val otherMonth = otherCalendar.get(Calendar.MONTH)
+    fun isSameDay(other: AppDate) = isEqual(other, TimeUnit.DAYS)
+    fun isSameMonth(other: AppDate) = isEqual(other, TimeUnit.MONTHS)
+    fun isSameYear(other: AppDate) = isEqual(other, TimeUnit.YEARS)
 
-        return when (unit) {
-            TimeUnit.MILLIS -> this.timeInMillis < date.timeInMillis
-            TimeUnit.SECONDS -> (this.timeInMillis / 1000) < (date.timeInMillis / 1000)
-            TimeUnit.DAYS -> {
-                if (thisYear < otherYear) {
-                    true
-                } else if (thisYear > otherYear) {
-                    false
-                } else {
-                    thisCalendar.get(Calendar.DAY_OF_YEAR) < otherCalendar.get(Calendar.DAY_OF_YEAR)
-                }
-            }
-            TimeUnit.MONTHS -> {
-                if (thisYear < otherYear) {
-                    true
-                } else if (thisYear > otherYear) {
-                    false
-                } else {
-                    thisMonth < otherMonth
-                }
-            }
-            TimeUnit.YEARS -> {
-                thisYear < otherYear
-            }
-        }
-    }
+    fun isBefore(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean =
+        truncateTo(unit) < date.truncateTo(unit)
 
-    fun isAfter(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean {
-        val thisCalendar = this.toCalendar()
-        val otherCalendar = date.toCalendar()
-
-        val thisYear = thisCalendar.get(Calendar.YEAR)
-        val otherYear = otherCalendar.get(Calendar.YEAR)
-        val thisMonth = thisCalendar.get(Calendar.MONTH) // Calendar.MONTH is 0-indexed
-        val otherMonth = otherCalendar.get(Calendar.MONTH)
-
-        return when (unit) {
-            TimeUnit.MILLIS -> this.timeInMillis > date.timeInMillis
-            TimeUnit.SECONDS -> (this.timeInMillis / 1000) > (date.timeInMillis / 1000)
-            TimeUnit.DAYS -> {
-                if (thisYear > otherYear) {
-                    true
-                } else if (thisYear < otherYear) {
-                    false
-                } else {
-                    thisCalendar.get(Calendar.DAY_OF_YEAR) > otherCalendar.get(Calendar.DAY_OF_YEAR)
-                }
-            }
-            TimeUnit.MONTHS -> {
-                if (thisYear > otherYear) {
-                    true
-                } else if (thisYear < otherYear) {
-                    false
-                } else {
-                    thisMonth > otherMonth
-                }
-            }
-            TimeUnit.YEARS -> {
-               thisYear > otherYear
-            }
-        }
-    }
+    fun isAfter(date: AppDate, unit: TimeUnit = TimeUnit.MILLIS): Boolean =
+        truncateTo(unit) > date.truncateTo(unit)
 
     fun isBeforeOrEquals(date: AppDate, timeUnit: TimeUnit = TimeUnit.MILLIS) =
         !isAfter(date, timeUnit)
@@ -127,30 +83,10 @@ class AppDate(val timeInMillis: Long) {
         isAfterOrEquals(startDate, unit) && isBeforeOrEquals(endDate, unit)
 
     companion object {
-        fun now() = AppDate(Calendar.getInstance().timeInMillis)
+        fun now() = AppDate(System.currentTimeMillis())
     }
 
     enum class TimeUnit {
-        MILLIS,
-        SECONDS,
-        DAYS,
-        MONTHS,
-        YEARS
-    }
-
-    sealed interface Formatter {
-        fun get(): String
-
-        data class NumericMonth(val separator: String) : Formatter {
-            override fun get() = "dd" + separator + "MM" + separator + "yyyy"
-        }
-
-        data class TextMonth(val separator: String) : Formatter {
-            override fun get() = "dd" + separator + "MMM" + separator + "yyyy"
-        }
-
-        data object StandardTime : Formatter {
-            override fun get() = "hh:mm a"
-        }
+        MILLIS, SECONDS, DAYS, MONTHS, YEARS
     }
 }

@@ -20,14 +20,17 @@ fun AppTheme(
     locale: Locale = Locale.getDefault(),
     isPreview: Boolean = true,
     colors: AppThemeColor = AppTheme.Default.colors(),
+    typography: AppTypography = appTypography,
+    padding: AppPadding = appPadding,
+    size: AppSize = appSize,
     content: @Composable () -> Unit,
 ) = CompositionLocalProvider(
     LocalContentColor provides if (useDarkTheme) Color.White else Color.Black,
     LocalAppColor provides if (useDarkTheme) colors.dark else colors.light,
-    LocalAppTypography provides appTypography,
+    LocalAppTypography provides typography,
     LocalAppShape provides appShape,
-    LocalAppPadding provides appPadding,
-    LocalAppSize provides appSize,
+    LocalAppPadding provides padding,
+    LocalAppSize provides size,
     LocalAppLocale provides locale,
 ) {
     if (!isPreview) {

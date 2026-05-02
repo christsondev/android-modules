@@ -8,6 +8,9 @@ import androidx.compose.ui.unit.dp
 @Immutable
 data class AppPadding(
     val none: Dp = 0.dp,
+    val tiny: Dp = 4.dp,
+    val small: Dp = 6.dp,
+    val smallVariant: Dp = 12.dp,
     val default: Dp = 16.dp,
     val container: Container = Container(),
     val icon: Icon = Icon(),
@@ -22,6 +25,9 @@ data class AppPadding(
 
     @Immutable
     data class Container(
+        val tiny: Dp = 4.dp,
+        val small: Dp = 6.dp,
+        val default: Dp = 16.dp,
         val smallBetweenItems: Dp = 8.dp,
         val betweenItems: Dp = 16.dp,
         val smallVertical: Dp = 8.dp,
