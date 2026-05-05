@@ -3,8 +3,8 @@ package com.christsondev.components.inputfield
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.christsondev.components.IconComposer
@@ -29,7 +28,7 @@ object InputField {
             val keyboardType: KeyboardType = KeyboardType.Text,
             val onTextChanged: (String) -> Unit = {},
             val onDone: (String) -> Unit = {},
-        ): Type
+        ) : Type
 
         data class Label(
             val label: String,
@@ -39,7 +38,7 @@ object InputField {
             val keyboardType: KeyboardType = KeyboardType.Text,
             val onTextChanged: (String) -> Unit = {},
             val onDone: (String) -> Unit = {},
-        ): Type
+        ) : Type
 
         data class Icon(
             val icon: IconComposer,
@@ -67,6 +66,7 @@ fun InputField(
     modifier: Modifier = Modifier,
     colors: InputColors = InputDefaults.colors(),
     configs: InputConfigs = InputDefaults.configs(),
+    contentPadding: PaddingValues = PaddingValues(AppTheme.padding.container.default),
     enabled: Boolean = true,
 ) {
     when (type) {
@@ -76,6 +76,7 @@ fun InputField(
                 type = type,
                 colors = colors,
                 configs = configs,
+                contentPadding = contentPadding,
                 enabled = enabled,
             )
         }
@@ -86,6 +87,7 @@ fun InputField(
                 type = type,
                 colors = colors,
                 configs = configs,
+                contentPadding = contentPadding,
                 enabled = enabled,
             )
         }
@@ -96,6 +98,7 @@ fun InputField(
                 type = type,
                 colors = colors,
                 configs = configs,
+                contentPadding = contentPadding,
                 enabled = enabled,
             )
         }
@@ -106,6 +109,7 @@ fun InputField(
                 type = type,
                 colors = colors,
                 configs = configs,
+                contentPadding = contentPadding,
                 enabled = enabled,
             )
         }
@@ -118,12 +122,11 @@ private fun InputFieldText(
     modifier: Modifier = Modifier,
     colors: InputColors,
     configs: InputConfigs,
+    contentPadding: PaddingValues,
     enabled: Boolean,
 ) {
-    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
-
     InputText(
-        modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
+        modifier = modifier.padding(contentPadding),
         value = type.value,
         hint = type.hint,
         enabled = enabled,
@@ -141,24 +144,23 @@ private fun InputFieldWithLabel(
     modifier: Modifier = Modifier,
     colors: InputColors,
     configs: InputConfigs,
+    contentPadding: PaddingValues,
     enabled: Boolean,
 ) {
-    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
-
     Row(
-        modifier = Modifier.then(modifier),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.padding(contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.padding.container.default),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-       Text(
-           modifier = Modifier.weight(type.labelWeight),
-           text = type.label,
-           style = AppTheme.typography.title,
-           color = AppTheme.color.onPrimaryContainer,
-       )
+        Text(
+            modifier = Modifier.weight(type.labelWeight),
+            text = type.label,
+            style = AppTheme.typography.title,
+            color = AppTheme.color.onPrimaryContainer,
+        )
 
         InputText(
-            modifier = containerModifier(backgroundColor = backgroundColor).weight(1f - type.labelWeight),
+            modifier = Modifier.weight(1f - type.labelWeight),
             value = type.value,
             hint = type.hint,
             enabled = enabled,
@@ -177,16 +179,15 @@ private fun InputFieldWithIcon(
     modifier: Modifier = Modifier,
     colors: InputColors,
     configs: InputConfigs,
+    contentPadding: PaddingValues,
     enabled: Boolean,
 ) {
-    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
-
     Row(
-        modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.padding(contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.padding.container.betweenItems),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        type.icon.Compose(Modifier.size(24.dp))
+        type.icon.Compose(Modifier.size(AppTheme.size.icon))
 
         InputText(
             value = type.value,
@@ -207,13 +208,12 @@ private fun InputFieldWithLeadingContent(
     modifier: Modifier = Modifier,
     colors: InputColors,
     configs: InputConfigs,
+    contentPadding: PaddingValues,
     enabled: Boolean,
 ) {
-    val backgroundColor = if (enabled) colors.container else colors.disabledContainer
-
     Row(
-        modifier = containerModifier(backgroundColor = backgroundColor).then(modifier),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.padding(contentPadding),
+        horizontalArrangement = Arrangement.spacedBy(AppTheme.padding.container.betweenItems),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         type.content.invoke()
@@ -230,13 +230,6 @@ private fun InputFieldWithLeadingContent(
         )
     }
 }
-
-@Composable
-private fun containerModifier(backgroundColor: Color) =
-    Modifier
-        .shadow(elevation = 3.dp, shape = AppTheme.shape.xlarge)
-        .background(color = backgroundColor)
-        .padding(all = 16.dp)
 
 @AppMultiPreview
 @Composable
@@ -255,20 +248,22 @@ private fun Preview() {
             )
 
             InputField(
+                modifier = Modifier
+                    .shadow(1.dp, AppTheme.shape.medium),
                 type = InputField.Type.Label(
                     label = "Username",
                     value = "Username",
                 ),
+                contentPadding = PaddingValues(16.dp),
             )
 
             InputField(
-                modifier = Modifier.height(92.dp),
                 type = InputField.Type.Icon(
                     icon = IconComposer.Icon(Icons.Rounded.CalendarMonth),
                     value = "Username",
                 ),
                 configs = InputDefaults.configs(
-                    singleLine = false
+                    singleLine = false,
                 ),
             )
         }

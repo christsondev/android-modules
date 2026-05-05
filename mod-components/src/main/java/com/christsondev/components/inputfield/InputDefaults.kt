@@ -2,14 +2,13 @@ package com.christsondev.components.inputfield
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import com.christsondev.components.theme.AppTheme
 
 data class InputColors(
     val text: Color = Color.Unspecified,
-    val container: Color = Color.Unspecified,
     val hint: Color = Color.Unspecified,
     val disabledText: Color = Color.Unspecified,
-    val disabledContainer: Color = Color.Unspecified,
 )
 
 data class InputConfigs(
@@ -17,6 +16,7 @@ data class InputConfigs(
     val minLines: Int,
     val maxLines: Int,
     val fixedCursor: Boolean,
+    val textStyle: TextStyle,
 )
 
 object InputDefaults {
@@ -24,16 +24,12 @@ object InputDefaults {
     @Composable
     fun colors(
         text: Color = AppTheme.color.onSurface,
-        container: Color = AppTheme.color.surface,
         hint: Color = AppTheme.color.onSurface.copy(alpha = 0.7f),
         disabledText: Color = AppTheme.color.onSurface.copy(alpha = 0.3f),
-        disabledContainer: Color = AppTheme.color.onSurface,
     ) = InputColors(
         text = text,
-        container = container,
         hint = hint,
         disabledText = disabledText,
-        disabledContainer = disabledContainer,
     )
 
     @Composable
@@ -42,10 +38,12 @@ object InputDefaults {
         minLines: Int = 1,
         maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
         fixedCursor: Boolean = false,
+        textStyle: TextStyle = AppTheme.typography.body,
     ) = InputConfigs(
         singleLine = singleLine,
         minLines = minLines,
         maxLines = maxLines,
         fixedCursor = fixedCursor,
+        textStyle = textStyle,
     )
 }

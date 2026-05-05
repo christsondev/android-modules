@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import com.christsondev.components.theme.AppTheme
 
 @Composable
 internal fun InputText(
@@ -100,12 +99,12 @@ private fun DefaultInputField(
         minLines = configs.minLines,
         maxLines = configs.maxLines,
         enabled = enabled,
-        textStyle = AppTheme.typography.body.copy(color = textColor),
+        textStyle = configs.textStyle.copy(color = textColor),
         decorationBox = { innerTextField ->
             if (text.isEmpty()) {
                 Text(
                     text = hint,
-                    style = AppTheme.typography.body,
+                    style = configs.textStyle,
                     color = colors.hint,
                 )
             }
@@ -179,12 +178,12 @@ private fun DecimalInputField(
         minLines = configs.minLines,
         maxLines = configs.maxLines,
         enabled = enabled,
-        textStyle = AppTheme.typography.body.copy(color = textColor),
+        textStyle = configs.textStyle.copy(color = textColor),
         decorationBox = { innerTextField ->
             if (textFieldValueState.text.isEmpty()) {
                 Text(
                     text = hint,
-                    style = AppTheme.typography.body,
+                    style = configs.textStyle,
                     color = colors.hint,
                 )
             }
