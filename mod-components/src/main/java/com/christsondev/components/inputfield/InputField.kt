@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.christsondev.components.IconComposer
 import com.christsondev.components.theme.AppMultiPreview
 import com.christsondev.components.theme.AppTheme
+import com.christsondev.utilities.orElse
 
 object InputField {
     sealed interface Type {
@@ -28,7 +29,7 @@ object InputField {
         data class Label(
             val label: String,
             val labelStyle: TextStyle,
-            val labelWeight: Float = 0.3f,
+            val labelWeight: Float? = null,
         ) : Type
 
         data class Icon(
@@ -45,12 +46,12 @@ object InputField {
 fun InputField(
     type: InputField.Type,
     modifier: Modifier = Modifier,
-    colors: InputColors = InputDefaults.colors(),
-    configs: InputConfigs = InputDefaults.configs(),
-    contentPadding: PaddingValues = PaddingValues(AppTheme.padding.container.default),
-    enabled: Boolean = true,
     value: String = "",
     hint: String = "",
+    colors: InputColors = InputDefaults.colors(),
+    configs: InputConfigs = InputDefaults.configs(),
+    contentPadding: PaddingValues = PaddingValues(),
+    enabled: Boolean = true,
     keyboardType: KeyboardType = KeyboardType.Text,
     onTextChanged: (String) -> Unit = {},
     onDone: (String) -> Unit = {},
@@ -85,14 +86,18 @@ fun InputField(
             }
 
             is InputField.Type.Label -> {
+                val (labelModifier, inputModifier) = type.labelWeight?.let {
+                    Modifier.weight(type.labelWeight) to Modifier.weight(1f - type.labelWeight)
+                }.orElse { Modifier to Modifier }
+
                 Text(
-                    modifier = Modifier.weight(type.labelWeight),
+                    modifier = labelModifier,
                     text = type.label,
                     style = type.labelStyle,
                     color = AppTheme.color.onPrimaryContainer,
                 )
 
-                inputContent(Modifier.weight(1f - type.labelWeight))
+                inputContent(inputModifier)
             }
 
             is InputField.Type.Icon -> {
