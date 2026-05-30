@@ -85,7 +85,10 @@ fun DateSelector(
                 }
             },
         ) {
-            DatePicker(state = state, showModeToggle = false)
+            DatePicker(
+                state = state,
+                colors = colors.datePickerColors,
+                showModeToggle = false)
         }
     }
 }
