@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.christsondev.components.IconComposer
 import com.christsondev.components.compose.clickableRipple
@@ -50,23 +51,23 @@ fun Button(
     colors: ButtonColors = ButtonDefaults.colors(),
     container: ButtonContainer = ButtonContainer.FILL,
     contentPadding: PaddingValues = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+    cornerRadius: Shape = AppTheme.shape.full,
     onClick: () -> Unit,
 ) {
     val fontColor = if (enabled) colors.font else colors.disabledFont
     val containerColor = if (enabled) colors.container else colors.disabledContainer
     val elevation = if (container == ButtonContainer.FILL) 3.dp else 0.dp
     val clickModifier = if (enabled) modifier.clickableRipple { onClick.invoke() } else Modifier
-    val backgroundModifier = container.getModifier(containerColor)
 
     Row(
         modifier = Modifier
             .shadow(
                 elevation = elevation,
-                shape = AppTheme.shape.full,
+                shape = cornerRadius,
+                clip = true,
             )
-            .clip(shape = AppTheme.shape.full)
             .then(modifier)
-            .then(backgroundModifier)
+            .buttonContainer(container, containerColor)
             .then(clickModifier)
             .padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically,

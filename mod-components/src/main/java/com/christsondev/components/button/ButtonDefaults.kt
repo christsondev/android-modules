@@ -19,17 +19,20 @@ enum class ButtonContainer {
     NONE,
     FILL,
     OUTLINE;
+}
 
-    @Composable
-    fun getModifier(containerColor: Color) = when (this) {
-        NONE -> Modifier
-        FILL -> Modifier.background(containerColor)
-        OUTLINE -> Modifier.border(
-            width = 1.dp,
-            color = containerColor,
-            shape = AppTheme.shape.full,
-        )
-    }
+@Composable
+fun Modifier.buttonContainer(
+    container: ButtonContainer,
+    containerColor: Color,
+) = when (container) {
+    ButtonContainer.NONE -> this
+    ButtonContainer.FILL -> this.background(containerColor)
+    ButtonContainer.OUTLINE -> this.border(
+        width = 1.dp,
+        color = containerColor,
+        shape = AppTheme.shape.full,
+    )
 }
 
 data object ButtonDefaults {

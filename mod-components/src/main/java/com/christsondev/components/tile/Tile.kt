@@ -15,8 +15,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -73,6 +75,24 @@ data object Tile {
 
 private val elevated = Tile.Container.Type.Elevated()
 private val none = Tile.Container.Effect.None
+
+private object TileContainerDefaults {
+    val elevation: Dp = 3.dp
+    val dashWidth: Dp = 2.dp
+    val cornerRadius: RoundedCornerShape = RoundedCornerShape(16.dp)
+
+    val dashIntervals = floatArrayOf(20f, 10f)
+
+    val dashColor: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = AppTheme.color.outlineVariant
+
+    val containerColor: Color
+        @Composable
+        @ReadOnlyComposable
+        get() = AppTheme.color.background
+}
 
 @Composable
 fun Tile(
@@ -191,7 +211,9 @@ private fun Modifier.tileStyle(
     return this
         .then(
             when (containerType) {
-                is Tile.Container.Type.Flat -> Modifier.background(containerColor, cornerRadius)
+                is Tile.Container.Type.Flat -> Modifier
+                    .clip(cornerRadius)
+                    .background(containerColor, cornerRadius)
                 is Tile.Container.Type.Elevated -> Modifier
                     .shadow(containerType.elevation, cornerRadius, clip = true)
                     .background(containerColor)

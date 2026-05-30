@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.christsondev.components.IconComposer
 import com.christsondev.components.button.Button
@@ -29,11 +30,13 @@ import com.christsondev.utilities.AppUtils
 @Composable
 fun DateSelector(
     initialDate: AppDate,
+    initialText: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    initialText: String,
     confirmButtonText: String,
+    icon: IconComposer = IconComposer.Icon(Icons.Rounded.CalendarMonth),
     colors: DateSelectorColors = DateSelectorDefaults.colors(),
+    cornerRadius: Shape = AppTheme.shape.large,
     onDateChanged: (AppDate?) -> Unit,
 ) {
     val timeZoneOffset = AppUtils.getLocalTimezoneOffsetMillis()
@@ -58,8 +61,9 @@ fun DateSelector(
         modifier = Modifier.then(modifier),
         enabled = enabled,
         colors = buttonColors,
+        cornerRadius = cornerRadius,
         type = Button.Type.IconWithText(
-            icon = IconComposer.Icon(Icons.Rounded.CalendarMonth, tint = iconTint),
+            icon = icon.copyComposer(iconTint),
             title = initialText,
         )
     ) {
@@ -69,6 +73,7 @@ fun DateSelector(
     if (showDialog) {
         DatePickerDialog(
             onDismissRequest = { showDialog = false },
+            colors = colors.datePickerColors,
             confirmButton = {
                 Button(
                     type = Button.Type.Text(confirmButtonText),
