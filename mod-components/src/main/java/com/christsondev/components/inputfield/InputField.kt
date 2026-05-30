@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -28,8 +29,9 @@ object InputField {
 
         data class Label(
             val label: String,
-            val labelStyle: TextStyle,
-            val labelWeight: Float? = null,
+            val style: TextStyle,
+            val color: Color,
+            val weight: Float? = null,
         ) : Type
 
         data class Icon(
@@ -86,15 +88,15 @@ fun InputField(
             }
 
             is InputField.Type.Label -> {
-                val (labelModifier, inputModifier) = type.labelWeight?.let {
-                    Modifier.weight(type.labelWeight) to Modifier.weight(1f - type.labelWeight)
+                val (labelModifier, inputModifier) = type.weight?.let {
+                    Modifier.weight(type.weight) to Modifier.weight(1f - type.weight)
                 }.orElse { Modifier to Modifier }
 
                 Text(
                     modifier = labelModifier,
                     text = type.label,
-                    style = type.labelStyle,
-                    color = AppTheme.color.onPrimaryContainer,
+                    style = type.style,
+                    color = type.color,
                 )
 
                 inputContent(inputModifier)
@@ -134,7 +136,8 @@ private fun Preview() {
                     .background(AppTheme.color.surface, AppTheme.shape.medium),
                 type = InputField.Type.Label(
                     label = "Username",
-                    labelStyle = AppTheme.typography.title,
+                    style = AppTheme.typography.title,
+                    color = AppTheme.color.onSurface,
                 ),
                 value = "Username",
                 contentPadding = PaddingValues(16.dp),

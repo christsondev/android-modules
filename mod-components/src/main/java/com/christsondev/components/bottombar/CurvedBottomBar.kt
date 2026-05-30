@@ -1,6 +1,7 @@
 package com.christsondev.components.bottombar
 
 import android.graphics.BlurMaskFilter
+import kotlin.math.roundToInt
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -68,6 +69,11 @@ fun CurvedBottomBar(
         val positionOffset = itemWidth * animationValue.value + (itemWidth / 2)
         val halfButtonSize = 48.dp / 2
 
+        // Use the animated value to determine which icon to show. 
+        // This ensures the icon switches when it's halfway through the transition 
+        // rather than instantly at the start.
+        val displayIndex = animationValue.value.roundToInt().coerceIn(items.indices)
+
         val shape = remember(positionOffset) {
             CurvedShape(
                 positionOffset = with(density) { positionOffset.toPx() },
@@ -115,7 +121,7 @@ fun CurvedBottomBar(
                     .shadow(elevation = 8.dp, shape = AppTheme.shape.full)
                     .background(color = containerColor),
             ) {
-                items[selectedIndex].icon
+                items[displayIndex].icon
                     .copyComposer(tint = colors.selected)
                     .Compose(
                         Modifier
