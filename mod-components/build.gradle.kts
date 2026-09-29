@@ -51,9 +51,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
-    val composeBom = platform(libs.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
+    implementation(platform(libs.compose.bom))
 
     implementation(libs.bundles.compose)
     implementation(libs.bundles.composeIcons)
@@ -61,14 +59,13 @@ dependencies {
 }
 
 // Jitpack
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = "com.christsondev"
-            artifactId = "components"
-
-            afterEvaluate {
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
                 from(components["release"])
+                groupId = "com.christsondev"
+                artifactId = "components"
             }
         }
     }

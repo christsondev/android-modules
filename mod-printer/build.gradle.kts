@@ -55,14 +55,13 @@ dependencies {
 }
 
 // Jitpack
-publishing {
-    publications {
-        create<MavenPublication>("release") {
-            groupId = "com.christsondev"
-            artifactId = "printer"
-
-            afterEvaluate {
+afterEvaluate {
+    publishing {
+        publications {
+            register<MavenPublication>("release") {
                 from(components["release"])
+                groupId = "com.christsondev"
+                artifactId = "printer"
             }
         }
     }
