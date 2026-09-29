@@ -22,7 +22,7 @@ class BluetoothScanner @Inject constructor(
 
     val events = Channel<ScanEvents>()
 
-    private val bluetoothLeScanner: BluetoothLeScanner
+    private val bluetoothLeScanner: BluetoothLeScanner?
         get() = bluetoothAdapter.bluetoothLeScanner
     private var bluetoothScanCallback: ScanCallback = this
 
@@ -31,7 +31,12 @@ class BluetoothScanner @Inject constructor(
         .build()
 
     fun scan(address: List<String>) {
-        bluetoothLeScanner.startScan(
+        val scanner = bluetoothLeScanner
+        if (scanner == null) {
+            events.trySend(ScanEvents.NotFound)
+            return
+        }
+        scanner.startScan(
             address.toScanFilters(),
             scanSettings,
             bluetoothScanCallback,
@@ -52,7 +57,7 @@ class BluetoothScanner @Inject constructor(
 
     fun stopScan() {
         countdownTimer.stopTimer()
-        bluetoothLeScanner.stopScan(bluetoothScanCallback)
+        bluetoothLeScanner?.stopScan(bluetoothScanCallback)
     }
 
     override fun onScanResult(callbackType: Int, result: ScanResult) {
